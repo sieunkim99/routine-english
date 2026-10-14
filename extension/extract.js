@@ -6,7 +6,7 @@ export function extractPage(){
  const inNotionBlock=notion&&!!active?.closest?.('[data-block-id],.notion-page-content');
  if(active?.matches('input,textarea')||active?.matches('[contenteditable="true"]')&&!inNotionBlock)throw Error('입력창 대신 본문을 선택해주세요.');
  const selection=getSelection()?.toString().trim()||'';
- const root=(notion&&active?.closest?.('.notion-page-content'))||(notion&&document.querySelector('.notion-page-content,[data-testid="page-content"]'))||document.querySelector('article,[role="main"],main')||document.body;
+ const root=(notion&&active?.closest?.('.notion-page-content'))||(notion&&document.querySelector('.notion-page-content,[data-testid="page-content"]'))||document.querySelector('[role="main"],main')||(document.querySelectorAll?.('article').length>1?document.body:document.querySelector('article'))||document.body;
  const blocked='script,style,noscript,nav,header,footer,aside,form,input,textarea,select,button,[aria-hidden="true"],[hidden]';
  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node,total='',onScreen='',count=0;
  while(!selection&&(node=walker.nextNode())&&count++<20000&&onScreen.length<limit){const parent=node.parentElement;if(!parent||parent.closest(blocked)||!notion&&parent.closest('[contenteditable]'))continue;const css=getComputedStyle(parent);if(css.display==='none'||css.visibility==='hidden'||!parent.getClientRects().length)continue;const value=node.textContent.replace(/\s+/g,' ').trim();if(value.length>1){if(total.length<limit)total+=value+'\n';const rect=parent.getBoundingClientRect?.();if(!rect||rect.bottom>0&&rect.top<(globalThis.innerHeight||900))onScreen+=value+'\n';}}

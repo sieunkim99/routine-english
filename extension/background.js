@@ -6,7 +6,7 @@ const controller=createController(chrome.storage);
 const ready=Promise.all([chrome.storage.local.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'}),chrome.storage.session.setAccessLevel({accessLevel:'TRUSTED_CONTEXTS'})]);
 let captureSequence=0;
 export async function capture(tab){const sequence=++captureSequence;try{
- const fallback=activityContext(tab);if(!tab?.id||!fallback)throw Error('일반 웹페이지에서 Dear Meow 아이콘이나 단축키로 열어주세요.');
+ const fallback=activityContext(tab);if(!tab?.id||!fallback)throw Error('일반 웹페이지에서 MeowChat 아이콘이나 단축키로 열어주세요.');
  let context;try{const [result]=await chrome.scripting.executeScript({target:{tabId:tab.id},func:extractPage});context=result?.result&&!result.error?{...result.result,tabId:tab.id}:null;}catch{}
  if(sequence===captureSequence)await chrome.storage.session.set({pageContext:context||{...fallback,tabId:tab.id},captureError:''});
  }catch(error){if(sequence===captureSequence)await chrome.storage.session.set({pageContext:null,captureError:error.message});}}
@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener((message,sender,respond)=>{
  if(sender.id!==chrome.runtime.id||!sender.url?.startsWith(chrome.runtime.getURL('')))return;
  const work=async()=>{await ready;if(message.type==='capture'){const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});await capture(tab);return controller.snapshot();}if(message.type==='options'){await chrome.runtime.openOptionsPage();return {};}
  if(message.type==='buddy-refresh'){await syncBuddy(true);return controller.snapshot();}
- if(!['identity','translation','forget','remember','exclude-expression','treat','continue','help','use-help','dismiss-help','skip-goal','snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','turn','finish','hint','support','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
+ if(!['identity','translation','forget','remember','exclude-expression','treat','continue','help','use-help','dismiss-help','skip-goal','snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','retopic','turn','finish','hint','support','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
  const result=await controller.dispatch(message);if(message.type==='settings'&&'buddyEnabled' in (message.settings||{}))await syncBuddy();return result;};
  work().then(value=>respond({ok:true,value}),error=>respond({ok:false,error:error.message||'요청을 완료하지 못했어요.'}));return true;
 });

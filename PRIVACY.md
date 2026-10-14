@@ -1,6 +1,6 @@
-# Dear Meow Privacy
+# MeowChat Privacy
 
-Dear Meow uses your own OpenAI API key. There is no Dear Meow account or application server.
+MeowChat uses your own OpenAI API key. There is no MeowChat account or application server.
 
 ## What stays on your computer
 
@@ -26,6 +26,6 @@ You consent before initial API connection. The icon/shortcut stages an excerpt y
 
 The public website is a clearly labelled installation preview using fixed example conversations. It never requests a real API key and stores only preview state in that tab's sessionStorage.
 
-## Dear Meow 추가 데이터
+## MeowChat 추가 데이터
 
 고양이 이름·선택 관심사·명시적으로 저장한 이야기 요약/다음 질문·츄르/활동 횟수는 로컬에 남습니다. 이야기 요약은 저장 전 화면에 표시하며 설정에서 이어갈 목록의 요약을 삭제할 수 있으며 별도의 대화/표현 기록은 유지됩니다. 몰래 도움창의 한국어/영어 초안과 맥락은 OpenAI에 전달되어 표현 도움을 생성합니다. 본 대화에 자동 제출하지 않지만 사용을 선택한 도움 초안·문장·핵심 표현은 로컬 학습 기록에 저장되고 후속 피드백 요청에 포함됩니다. ‘몰래’는 별도 도움창이라는 뜻이며 AI 제공자로부터 비밀이라는 뜻이 아닙니다. 고양이 content script에는 이름·표시 상태·동작 상태만 전달하고 관심사·이야기 기억·도움 초안·학습 기록·키를 전달하지 않습니다.

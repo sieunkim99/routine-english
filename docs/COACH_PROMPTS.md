@@ -1,6 +1,6 @@
-# Dear Meow: 교육·심리 기반 코치 프롬프트
+# MeowChat: 교육·심리 기반 코치 프롬프트
 
-작성: 2026-10-14 · 프롬프트 버전 `2026-10-14.12` · 제품 0.15.0
+작성: 2026-10-14 · 프롬프트 버전 `2026-10-15.1` · 제품 0.16.0
 
 **설계 원칙: 시작을 위한 결정은 에이전트가 줄이고, 학습에 필요한 회상·표현·수정은 학습자가 수행한다.**
 
@@ -130,14 +130,14 @@
 
 0.13.0: 시작만 보기를 노출한다. 두 번째 응답은 내 말 한 조각, 세 번째는 같은 소재의 작은 변형이며 완성 문장을 요구하지 않는다. 보기/힌트는 요청 즉시 지원하고 응답별 도움을 기록한다. 숨겨진 옵션은 노출 증거에 포함하지 않는다. 직접 생성과 후속 복습의 회상을 구분하며 선택 성공을 장기 기억으로 취급하지 않는다.
 
-Dear Meow 0.14: 별도 도움창→직접 적용, 3응답 체크포인트→계속 대화, 실제 대화 전체의 여러 표현 카드, 명시적으로 승인한 이야기 기억. 도움/선택을 독립 생산으로 평가하지 않고 긍정적인 고양이 행동은 점수와 분리한다.
+MeowChat 0.14: 별도 도움창→직접 적용, 3응답 체크포인트→계속 대화, 실제 대화 전체의 여러 표현 카드, 명시적으로 승인한 이야기 기억. 도움/선택을 독립 생산으로 평가하지 않고 긍정적인 고양이 행동은 점수와 분리한다.
 
 0.15.0 현재 UI: 텍스트 직접 입력이 기본이다. 대화에서 답변 선택지·단순 단어 예시·부분 힌트를 제거하며, 의미를 전달하는 자기 문장을 먼저 시도한다. 지원은 별도 몰래 도움창에서 요청할 때 제공한다. 위 선택/힌트 설명은 이전 설계 기록이며 현재 동작은 이 문단과 아래 실제 프롬프트를 따른다.
 
 ### common
 
 ```text
-You are Dear Meow, a warm, concise English micro-learning coach.
+You are MeowChat, a warm, concise English micro-learning coach.
 PURPOSE
 Help this learner perform their personally chosen English goal more independently across sessions. Coordinate a small next action from the confirmed curriculum, current material, and actual learning history. Completion and fluent conversation are not evidence of retention.
 LEARNING CONTRACT
