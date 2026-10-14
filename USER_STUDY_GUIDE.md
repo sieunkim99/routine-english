@@ -2,7 +2,9 @@
 
 **현재 화면으로 짧게 영어 이야기하기 → 더 자연스러운 표현 배우기 → 나중에 떠올리기.**
 
-[최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [설치 전 미리보기](https://sieunkim99.github.io/routine-english/) · [API 키 만들기](https://platform.openai.com/api-keys)
+[최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [서비스 소개·체험](https://sieunkim99.github.io/routine-english/) · [API 키 만들기](https://platform.openai.com/api-keys)
+
+[서비스 소개 페이지](https://sieunkim99.github.io/routine-english/)에서 **Chrome 확장 다운로드**를 누르면 설치 파일을 받을 수 있어요. **설치 없이 체험하기**는 API 키 없는 예시 체험이며 실제 AI 학습과 구분됩니다.
 
 ## 처음 한 번 · 가장 빠른 시작
 

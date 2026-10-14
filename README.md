@@ -6,7 +6,9 @@ Dear Meow는 현재 화면의 이야기로 대화하고, 말하고 싶었던 뜻
 
 사진을 참고한 검은 머리·흰 가르마 무늬의 고양이에게 이름을 지어주세요. 관심사는 영어 키워드를 눌러 선택하거나 모두 건너뛸 수 있습니다. 첫 반응은 쉽게 고르고, 다음에는 내 말 한 조각을 직접 표현합니다. 막히면 도움을 열고, 마지막에는 더 자연스러운 표현을 배웁니다. 작은 고양이를 누르면 현재 페이지로 이야기합니다. 기억해둔 이야기가 있으면 현재 화면과 지난 이야기 중 선택할 수 있습니다. 한국어 글도 소재가 됩니다. 사용자의 목표는 난이도와 대화 능력을 조절하고, 현재 콘텐츠가 이야기의 주제를 정합니다.
 
-[최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [사용자 스터디 가이드](USER_STUDY_GUIDE.md) · [설치 전 미리보기](https://sieunkim99.github.io/routine-english/) · [고양이 디자인 미리보기](https://sieunkim99.github.io/routine-english/buddy-demo.html)
+[서비스 소개](https://sieunkim99.github.io/routine-english/) · [최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [사용자 스터디 가이드](USER_STUDY_GUIDE.md) · [설정·대화 체험](https://sieunkim99.github.io/routine-english/) · [고양이 디자인 미리보기](https://sieunkim99.github.io/routine-english/buddy-demo.html)
+
+서비스 소개 페이지에서 **Chrome 확장 다운로드** 또는 **설치 없이 체험하기**를 선택합니다. 체험에는 API 키가 필요 없으며 고정 예시로 기능을 살펴봅니다. 실제 AI 학습은 설치한 Chrome 확장에서 진행합니다.
 
 ## 처음 한 번 설정
 
