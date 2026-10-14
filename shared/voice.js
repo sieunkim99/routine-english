@@ -14,14 +14,14 @@ export function coachVoice(voices=[]){
  for(const pattern of priorities){const match=english.find(v=>pattern.test(v.name||''));if(match)return match;}
  return english.find(v=>v.default)||english.find(v=>/^en[-_]US$/i.test(v.lang))||english[0];
 }
-export function createVoice({Recognition, synthesis, Utterance, setTimer=setTimeout,clearTimer=clearTimeout,onState=()=>{},onTranscript=()=>{},onError=()=>{}}={}){
+export function createVoice({Recognition, synthesis, Utterance, language='en-US', setTimer=setTimeout,clearTimer=clearTimeout,onState=()=>{},onTranscript=()=>{},onError=()=>{}}={}){
  let recognition=null,wanted=false,state='idle',transcript='',prefix='',parts=new Map(),interim=new Map(),restartTimer=null,stopTimer=null,stopResolve=null,generation=0,speechGeneration=0,voiceWaitCleanup=null;
  const update=s=>{state=s;onState(s);};
  const combine=()=>[prefix,...[...new Set([...parts.keys(),...interim.keys()])].sort((a,b)=>a-b).map(i=>parts.get(i)||interim.get(i)||'')].filter(Boolean).join(' ').trim();
  function clearRestart(){if(restartTimer!==null){clearTimer(restartTimer);restartTimer=null;}}
  function settle(){if(stopTimer!==null){clearTimer(stopTimer);stopTimer=null;}if(stopResolve){const resolve=stopResolve;stopResolve=null;resolve(transcript);}}
  function begin(){
-  if(!wanted)return;const token=++generation;parts=new Map();interim=new Map();const r=recognition=new Recognition();r.lang='en-US';r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
+  if(!wanted)return;const token=++generation;parts=new Map();interim=new Map();const r=recognition=new Recognition();r.lang=language;r.continuous=true;r.interimResults=true;r.maxAlternatives=1;
   r.onstart=()=>{if(token===generation&&wanted)update('listening');};
   r.onresult=e=>{if(token!==generation)return;for(let i=e.resultIndex;i<e.results.length;i++){const result=e.results[i],text=result[0].transcript.trim();if(result.isFinal){parts.set(i,text);interim.delete(i);}else interim.set(i,text);}transcript=combine();onTranscript(transcript);};
   r.onerror=e=>{if(token!==generation)return;if(e.error==='no-speech'||e.error==='aborted'&&!wanted)return;wanted=false;clearRestart();onError(e.error==='not-allowed'||e.error==='service-not-allowed'?'마이크 사용을 허용한 뒤 음성 대화를 다시 시작해주세요.':'음성 인식 연결이 끊겼어요. 인식된 내용은 남아 있어요. 다시 시작하거나 텍스트로 보내주세요.');update('idle');settle();};
