@@ -1,5 +1,5 @@
 import {openingQuestion} from './voice.js';
-import {initialState,migrate,material,selectSkill,reviewQueue,expressionCards,nextExpressionReview,dueAt,validateSettings} from './state.js';
+import {initialState,migrate,material,selectSkill,reviewQueue,expressionCards,nextExpressionReview,dueAt,validateSettings,starterPlan} from './state.js';
 import {generate} from './ai.js';
 // The service worker owns all changes; the UI never receives the credential.
 export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.randomUUID()}={}){
@@ -16,13 +16,14 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
     if(!msg.consent)throw Error('API 연결과 데이터 전달 안내에 동의해주세요.');const key=String(msg.key||'').trim();if(key.length<20||key.length>500)throw Error('API 키를 확인해주세요.');await ai('check',{}, {key});
     const settings=validateSettings({...s.settings,...msg.settings});await store.local.set({credential:{key,verifiedAt:now()}});s.consent=true;s.settings=settings;await save(s);return snapshot();
    }
+   case 'skip-goal':{if(!s.consent||!snap.hasKey)throw Error('먼저 API를 연결해주세요.');if(!s.profile||!s.curriculum.length){const plan=starterPlan();s.profile=plan.profile;s.curriculum=plan.curriculum;}s.onboarding.approved=true;s.onboarding.skipped=true;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();}
    case 'goal':{
     if(!s.consent||!snap.hasKey)throw Error('먼저 AI를 연결해주세요.');const content=String(msg.text||'').trim();if(!content&&!msg.forcePlan)throw Error('영어로 하고 싶은 일을 들려주세요.');if(content.length>4000)throw Error('조금 짧게 이야기해주세요.');
     const messages=[...(s.onboarding.messages.length?s.onboarding.messages:[{role:'assistant',content:openingQuestion}]),...(content?[{role:'user',content}]:[])];if(!messages.some(m=>m.role==='user'))throw Error('먼저 나의 이야기를 들려주세요.');
     const result=await call('onboard',{profile:s.profile,messages,forcePlan:!!msg.forcePlan||!!s.onboarding.proposal||messages.filter(m=>m.role==='user').length>=3});s.onboarding.messages=[...messages,{role:'assistant',content:result.reply}];s.onboarding.proposal=result.ready?{profile:result.profile,curriculum:result.curriculum,feedback:result.feedback}:null;await save(s);return snapshot();
    }
    case 'approve':{
-    const plan=s.onboarding.proposal;if(!plan)throw Error('먼저 코치가 계획을 준비하도록 이야기해주세요.');s.profile=plan.profile;s.curriculum=plan.curriculum.map((c,i)=>({...c,id:`${c.id.slice(0,60)}-${i}`}));s.onboarding.approved=true;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();
+    const plan=s.onboarding.proposal;if(!plan)throw Error('먼저 코치가 계획을 준비하도록 이야기해주세요.');s.profile=plan.profile;s.curriculum=plan.curriculum.map((c,i)=>({...c,id:`${c.id.slice(0,60)}-${i}`}));s.onboarding.approved=true;s.onboarding.skipped=false;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();
    }
    case 'revise':await store.session.set({active:null});s.onboarding.approved=false;s.onboarding.proposal=null;s.onboarding.messages=[];await save(s);return snapshot();
    case 'mode':s.settings.voice=msg.voice!==false;await save(s);return snapshot();
@@ -40,11 +41,11 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
      source={title:'지난 대화 이어가기',url:'',text:`Previous objective: ${previous.skillTitle}\nPrevious learner answers: ${previous.messages.filter(m=>m.role==='user').map(m=>m.content).join('\n')}\nUseful expression to retrieve (do not reveal first): ${previous.feedback.expression}\nTarget chunk: ${previous.chunk||''}\nNext focus: ${previous.feedback.nextFocus}`};
     }else{source=material(msg.source||snap.pageContext);skill=chosen.skill;}
     const result=await call('start',{profile:s.profile,skill,source,review,chunk:previous?.chunk||'',recent:previous?[previous]:s.sessions.slice(-3)});
-    const active={id:id(),source,skill,review,connection:result.connection,hint:result.hint,hintUsed:false,task:result.task||null,chunk:result.task?.chunk||'',attempts:[],messages:[{role:'assistant',content:result.question,task:result.task}],feedback:null,createdAt:now()};await store.session.set({active});return snapshot();
+    const active={id:id(),source,skill,review,connection:result.connection,sourceDetail:result.sourceDetail||'',hint:result.hint,hintUsed:false,task:result.task||null,chunk:result.task?.chunk||'',attempts:[],messages:[{role:'assistant',content:result.question,task:result.task}],feedback:null,createdAt:now()};await store.session.set({active});return snapshot();
    }
    case 'turn':{
     const a=snap.active;if(!a||a.feedback)throw Error('진행 중인 대화가 없어요.');const text=String(msg.text||'').trim();if(!text||text.length>4000)throw Error('단어나 짧은 표현으로 편하게 답해주세요.');
-    const attempts=[...(a.attempts||[]),{mode:a.task?.mode||'chat',response:text}];const messages=[...a.messages,{role:'user',content:text}];const finish=messages.filter(m=>m.role==='user').length>=3;
+    const assisted=a.task?.mode==='chat'&&a.task.choices?.includes(text);const attempts=[...(a.attempts||[]),{mode:assisted?'suggestion':a.task?.mode||'chat',response:text}];const messages=[...a.messages,{role:'user',content:text,assisted:!!assisted}];const finish=messages.filter(m=>m.role==='user').length>=3;
     const result=await call(finish?'finish':'turn',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts,messages,recent:s.sessions.slice(-3)});
     a.attempts=attempts;a.task=finish?null:result.task||null;a.messages=finish?messages:[...messages,{role:'assistant',content:result.reply,task:result.task}];a.feedback=finish?result:null;if(finish&&result.chunk)a.chunk=result.chunk;a.lastFeedback=finish?'':result.feedback;await store.session.set({active:a});if(finish)await record(s,a);return snapshot();
    }

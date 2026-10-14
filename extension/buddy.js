@@ -1,7 +1,7 @@
 // Isolated content script: displays a friend; does not read the page or use API credentials.
 (()=>{
  const id='routine-english-buddy';if(document.getElementById(id))return;
- const host=document.createElement('div');host.id=id;const root=host.attachShadow({mode:'closed'});let quietUntil=0,timer;
+ const host=document.createElement('div');host.id=id;for(const [key,value] of Object.entries({position:'fixed',right:'22px',bottom:'24px','z-index':'2147483646',display:'block',visibility:'visible',opacity:'1','pointer-events':'auto'}))host.style.setProperty(key,value,'important');const root=host.attachShadow({mode:'closed'});let quietUntil=0,timer;
  root.innerHTML=`<style>
  :host{all:initial;position:fixed;right:22px;bottom:24px;z-index:2147483646;font-family:system-ui,sans-serif;}
  .friend{position:relative;display:flex;align-items:flex-end;gap:8px;}
@@ -22,6 +22,6 @@
  root.querySelector('.cat').addEventListener('click',start);bubble.addEventListener('click',start);
  root.querySelector('.dots').addEventListener('click',e=>{if(e.isTrusted)root.querySelector('.menu').classList.toggle('open');});
  root.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async e=>{if(!e.isTrusted)return;root.querySelector('.menu').classList.remove('open');const r=await chrome.runtime.sendMessage({type:b.dataset.action==='quiet'?'buddy-quiet':'buddy-settings'});if(r?.value)setState(r.value);}));
- const handleMessage=(m,_,respond)=>{if(m.type==='buddy-state'){setState(m);respond({ok:true});}if(m.type==='buddy-invite'&&quietUntil<=Date.now()&&document.visibilityState==='visible'){friend.classList.add('offer');bubble.textContent=m.review?'배운 표현 하나 떠올려볼까? 눌러서 이 화면 이야기부터 해도 좋아 🐾':'이 화면에서 재미있는 이야기 발견했어? 영어로 나눠보자 🐾';clearTimeout(timer);timer=setTimeout(()=>friend.classList.remove('offer'),12000);respond({ok:true});}};chrome.runtime.onMessage.addListener(handleMessage);
+ const handleMessage=(m,_,respond)=>{if(!host.isConnected){clearTimeout(timer);chrome.runtime.onMessage.removeListener(handleMessage);return;}if(m.type==='buddy-state'){setState(m);respond({ok:true});}if(m.type==='buddy-invite'&&quietUntil<=Date.now()&&document.visibilityState==='visible'){friend.classList.add('offer');bubble.textContent=m.review?'배운 표현 하나 떠올려볼까? 눌러서 이 화면 이야기부터 해도 좋아 🐾':'이 화면에서 재미있는 이야기 발견했어? 영어로 나눠보자 🐾';clearTimeout(timer);timer=setTimeout(()=>friend.classList.remove('offer'),12000);respond({ok:true});}};chrome.runtime.onMessage.addListener(handleMessage);
  document.documentElement.append(host);chrome.runtime.sendMessage({type:'buddy-status'}).then(r=>setState(r?.value)).catch(()=>host.remove());
 })();

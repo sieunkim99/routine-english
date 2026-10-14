@@ -15,11 +15,11 @@ chrome.action.onClicked.addListener(openFromAction);
 chrome.contextMenus.onClicked.addListener((info,tab)=>{if(info.menuItemId==='practice')openFromAction(tab);});
 async function schedule(){await ready;const {state}=await chrome.storage.local.get('state');const s=migrate(state);if(s.onboarding.approved&&s.settings.enabled){const alarm=await chrome.alarms.get('invite');let development=false;try{development=(await chrome.management?.getSelf?.())?.installType==='development';}catch{}const period=s.settings.schedule==='times'?1:Math.min(5,development?s.settings.interval:Math.max(.5,s.settings.interval));if(!alarm||alarm.periodInMinutes!==period)await chrome.alarms.create('invite',{periodInMinutes:period,delayInMinutes:period});}else await chrome.alarms.clear('invite');}
 let buddySync=Promise.resolve();
-function syncBuddy(){buddySync=buddySync.catch(()=>{}).then(async()=>{
+function syncBuddy(refresh=false){buddySync=buddySync.catch(()=>{}).then(async()=>{
  if(!chrome.scripting.registerContentScripts||!chrome.permissions)return;const snap=await controller.snapshot(),enabled=snap.state.settings.buddyEnabled&&await chrome.permissions.contains({origins:['https://*/*','http://*/*']});const scripts=await chrome.scripting.getRegisteredContentScripts({ids:['routine-buddy']});
  if(enabled&&!scripts.length)await chrome.scripting.registerContentScripts([{id:'routine-buddy',matches:['https://*/*','http://*/*'],js:['buddy.js'],runAt:'document_idle',allFrames:false,persistAcrossSessions:true}]);
  if(!enabled&&scripts.length)await chrome.scripting.unregisterContentScripts({ids:['routine-buddy']});
- const tabs=await chrome.tabs.query({});for(const tab of tabs){if(enabled&&/^https?:/.test(tab.url||'')){try{await chrome.scripting.executeScript({target:{tabId:tab.id},files:['buddy.js']});}catch{}}try{await chrome.tabs.sendMessage(tab.id,{type:'buddy-state',enabled,quietUntil:snap.state.snooze});}catch{}}
+ const tabs=await chrome.tabs.query({});for(const tab of tabs){if(enabled&&/^https?:/.test(tab.url||'')){try{if(refresh)await chrome.scripting.executeScript({target:{tabId:tab.id},func:()=>document.getElementById('routine-english-buddy')?.remove()});await chrome.scripting.executeScript({target:{tabId:tab.id},files:['buddy.js']});}catch{}}try{await chrome.tabs.sendMessage(tab.id,{type:'buddy-state',enabled,quietUntil:snap.state.snooze});}catch{}}
  });return buddySync;}
 async function buddyStatus(){const snap=await controller.snapshot();return {enabled:!!snap.state.settings.buddyEnabled,quietUntil:snap.state.snooze};}
 async function setup(details){await ready;await chrome.sidePanel.setPanelBehavior({openPanelOnActionClick:false});await chrome.alarms.clear('practice');await chrome.contextMenus.removeAll();chrome.contextMenus.create({id:'practice',title:'이 내용으로 영어 대화',contexts:['selection']});await schedule();await syncBuddy();if(details?.reason==='install')chrome.runtime.openOptionsPage();}
@@ -36,8 +36,9 @@ chrome.runtime.onMessage.addListener((message,sender,respond)=>{
  }
  if(sender.id!==chrome.runtime.id||!sender.url?.startsWith(chrome.runtime.getURL('')))return;
  const work=async()=>{await ready;if(message.type==='capture'){const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});await capture(tab);return controller.snapshot();}if(message.type==='options'){await chrome.runtime.openOptionsPage();return {};}
- if(!['snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','turn','finish','hint','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
- const result=await controller.dispatch(message);return result;};
+ if(message.type==='buddy-refresh'){await syncBuddy(true);return controller.snapshot();}
+ if(!['skip-goal','snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','turn','finish','hint','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
+ const result=await controller.dispatch(message);if(message.type==='settings'&&'buddyEnabled' in (message.settings||{}))await syncBuddy();return result;};
  work().then(value=>respond({ok:true,value}),error=>respond({ok:false,error:error.message||'요청을 완료하지 못했어요.'}));return true;
 });
 let inviting=false;

@@ -73,3 +73,9 @@ npm run dev
 빌드 결과: `dist/extension`, `dist/routine-english-extension.zip`, `dist/web`. GitHub workflow가 테스트·빌드·GitHub Pages 게시를 수행합니다. source: `shared/app.js`, `shared/controller.js`, `shared/state.js`, `shared/prompts.js`, `shared/ai.js`, `extension/background.js`, `extension/buddy.js`, `extension/extract.js`.
 
 자동 테스트는 모의 AI/Chrome API를 사용합니다. 실제 API 품질, 네이티브 설치·권한·마이크·운영체제 알림과 고양이 동작은 기기에서 확인해야 합니다. MIT 라이선스로 공개합니다. 이슈·소스·릴리스에 API 키나 개인 학습 자료를 올리지 마세요.
+
+### 0.12: 짧게 고르고, 내 말로 이어가기
+
+현재 페이지의 선택 문장 또는 화면에 보이는 본문을 우선 사용합니다. 코치는 실제 원문 일부를 근거로 짧은 질문과 서로 다른 답변 버튼 2–3개를 준비합니다. 정답 퀴즈가 아니며, 원하면 음성이나 짧은 단어로 답해도 됩니다. 최대 세 번 응답한 뒤 더 자연스러운 표현 하나를 보여주고 복습에 저장합니다. 버튼 선택은 독립적인 영어 생성 능력으로 평가하지 않습니다. 원문 인용 검사는 소재의 근거를 확인하는 장치이며 AI의 의미적 정렬을 완전히 보장하지는 않습니다.
+
+API 연결 후 **목표는 나중에 · 바로 시작하기**로 초기 대화를 생략할 수 있습니다. 이때 영어 수준은 미평가이며, 설정에서 **목표·관심사 추가 / 수정**으로 보완합니다. 현재 화면 탭의 **고양이 친구 켜기**로 표시 권한을 요청합니다. 이미 켜져 있으면 **고양이 다시 표시**로 기존 탭에도 다시 표시합니다.
