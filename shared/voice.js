@@ -1,5 +1,11 @@
 /** Browser voice turns: explicit completion, pause-tolerant recognition, no mic/TTS overlap. */
-export const openingQuestion = 'Think of a recent moment when English would have helped you — a video, a message, a conversation, or something else. What were you trying to understand or say?';
+export const openingQuestion = "What does a typical day look like for you — work, study, or something else?";
+// Strip presentation syntax only; preserve words, sentence punctuation and contractions.
+export function speechText(text){return String(text)
+ .replace(/```[^\n]*\n?/g,' ').replace(/!\[([^\]]*)\]\([^)]*\)/g,'$1').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1')
+ .replace(/<[^>]+>/g,' ').replace(/^\s{0,3}(?:#{1,6}\s+|>\s*|[-+*]\s+|\d+[.)]\s+)/gm,'')
+ .replace(/[*_`~]+/g,'').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'")
+ .replace(/\s+/g,' ').trim();}
 export function speechChunks(text,max=220){const chunks=[];let pending='';for(const word of String(text).trim().split(/\s+/)){if(pending&&pending.length+word.length+1>max){chunks.push(pending);pending='';}pending+=(pending?' ':'')+word;}if(pending)chunks.push(pending);return chunks;}
 // Prefer conversational voices rather than the first OS voice (which can be a novelty voice).
 export function coachVoice(voices=[]){
@@ -30,7 +36,7 @@ export function createVoice({Recognition, synthesis, Utterance, setTimer=setTime
  }
  function stop(){wanted=false;clearRestart();if(!recognition){update('idle');return Promise.resolve(transcript);}update('finishing');return new Promise(resolve=>{stopResolve=resolve;stopTimer=setTimer(()=>{generation++;const r=recognition;recognition=null;r?.abort();update('idle');settle();},1800);try{recognition.stop();}catch{update('idle');settle();}});}
  function speak(text,done=()=>{}){
-  cancel();cancelSpeech();const token=++speechGeneration;const chunks=speechChunks(text);if(!synthesis||!Utterance){onError('읽어주기가 지원되지 않아요. 코치의 답변을 화면에서 확인해주세요.');return;}
+  cancel();cancelSpeech();const token=++speechGeneration;const chunks=speechChunks(speechText(text));if(!synthesis||!Utterance){onError('읽어주기가 지원되지 않아요. 코치의 답변을 화면에서 확인해주세요.');return;}
   let selectedVoice;
   const play=i=>{if(token!==speechGeneration)return;if(i>=chunks.length){update('idle');done();return;}const u=new Utterance(chunks[i]);u.lang=selectedVoice?.lang||'en-US';u.rate=1;u.pitch=1;u.volume=1;if(selectedVoice)u.voice=selectedVoice;
    u.onend=()=>play(i+1);u.onerror=()=>{if(token===speechGeneration){update('idle');onError('코치 음성을 재생하지 못했어요. 화면의 답변을 읽거나 다시 듣기를 눌러주세요.');}};update('speaking');synthesis.speak(u);

@@ -19,12 +19,12 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
    case 'goal':{
     if(!s.consent||!snap.hasKey)throw Error('먼저 AI를 연결해주세요.');const content=String(msg.text||'').trim();if(!content&&!msg.forcePlan)throw Error('영어로 하고 싶은 일을 들려주세요.');if(content.length>4000)throw Error('조금 짧게 이야기해주세요.');
     const messages=[...(s.onboarding.messages.length?s.onboarding.messages:[{role:'assistant',content:openingQuestion}]),...(content?[{role:'user',content}]:[])];if(!messages.some(m=>m.role==='user'))throw Error('먼저 나의 이야기를 들려주세요.');
-    const result=await call('onboard',{profile:s.profile,messages,forcePlan:msg.forcePlan});s.onboarding.messages=[...messages,{role:'assistant',content:result.reply}];s.onboarding.proposal=result.ready?{profile:result.profile,curriculum:result.curriculum}:null;await save(s);return snapshot();
+    const result=await call('onboard',{profile:s.profile,messages,forcePlan:!!msg.forcePlan||!!s.onboarding.proposal||messages.filter(m=>m.role==='user').length>=3});s.onboarding.messages=[...messages,{role:'assistant',content:result.reply}];s.onboarding.proposal=result.ready?{profile:result.profile,curriculum:result.curriculum,feedback:result.feedback}:null;await save(s);return snapshot();
    }
    case 'approve':{
     const plan=s.onboarding.proposal;if(!plan)throw Error('먼저 코치가 계획을 준비하도록 이야기해주세요.');s.profile=plan.profile;s.curriculum=plan.curriculum.map((c,i)=>({...c,id:`${c.id.slice(0,60)}-${i}`}));s.onboarding.approved=true;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();
    }
-   case 'revise':await store.session.set({active:null});s.onboarding.approved=false;s.onboarding.proposal=null;await save(s);return snapshot();
+   case 'revise':await store.session.set({active:null});s.onboarding.approved=false;s.onboarding.proposal=null;s.onboarding.messages=[];await save(s);return snapshot();
    case 'mode':s.settings.voice=msg.voice!==false;await save(s);return snapshot();
    case 'settings':s.settings=validateSettings({...s.settings,...msg.settings});s.lastInvitation=now();await save(s);return snapshot();
    case 'invited':s.lastInvitation=now();await save(s);return snapshot();

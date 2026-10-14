@@ -9,7 +9,7 @@
 1. Download `routine-english-extension.zip` from this repository's Releases and unzip it.
 2. In Chrome, open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose the unzipped folder containing `manifest.json`.
 3. The full-page setup opens automatically. Consent to the data notice, paste **your own OpenAI API key**, and choose a reminder interval. The extension validates the key with a small billed request.
-4. Talk with the coach **in English**, in voice-first conversation or text chat. It uses your own English replies to infer a tentative starting level while discovering your goal, asks a few natural follow-up questions, and drafts your goal, scope, first step and 3–5 connected learning abilities. Confirm the plan or ask for a revision.
+4. Talk with the coach **in English**, in voice-first conversation or text chat. It uses your own English replies to infer a tentative starting level while discovering your goal, collects up to three short replies about daily context, a desired English-use situation and a small English sample, and drafts your goal, scope, first step and 3–5 connected learning abilities. Read specific English feedback on your actual answers, then confirm the plan or ask for a revision.
 5. On a page you want to read, click the extension icon. The side panel offers **Current-page conversation** and **Review**.
 
 You do not need Node, a terminal, a connection code or a running server to use the extension. Each person supplies their own API key. Do not put a shared key in the source: it would be extractable and could create unlimited charges for its owner. A future shared-key edition needs a server with accounts and usage limits.

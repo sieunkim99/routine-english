@@ -6,14 +6,14 @@
 
 | 탐색할 것 | 질문 예시 | 이후에 쓰는 곳 |
 | --- | --- | --- |
-| 최근 실제 장면 | “Think of a recent moment when English would have helped you. What were you trying to understand or say?” | 목표 상황과 첫 연습의 소재 |
+| 최근 실제 장면 | “What does a typical day look like for you — work, study, or something else?” | 목표 상황과 첫 연습의 소재 |
 | 원하는 미래 모습 | “If that went well next time, what would you be able to do?” | profile.scene과 목표 행동 |
 | 개인적 의미 | “Why would that matter to you personally?” | profile.personalMeaning, 계획의 whyItMatters, 활동 추천 이유 |
 | 현재 어려움 | “What gets in the way for you right now?” | profile.barrier, 도움의 양과 연습 순서 |
 | 원하는 범위와 관심사 | “Where else would you like to use English?” / “What do you enjoy reading or watching?” | profile.scope와 interests, 콘텐츠 기반 대화 연결 |
 | 해볼 만한 첫 행동 | “Would starting with … feel useful to you?” | 승인할 첫걸음과 커리큘럼 |
 
-최근 장면이 없다면 가까운 미래의 현실적인 장면을 떠올리게 돕습니다. 막연한 답에는 사용자의 말과 연결되는 예시를 2–3개 제시합니다. 하나의 장면을 찾았다고 전체 목표를 거기에 가두지 않습니다. 보통 4–6회 짧은 응답 안에서 충분한 정보를 모으면 계획을 제안하되, 임의의 횟수보다 목표·개인적 의미·실제 영어 표현의 근거를 우선합니다.
+최근 장면이 없다면 가까운 미래의 현실적인 장면을 떠올리게 돕습니다. 막연한 답에는 사용자의 말과 연결되는 예시를 2–3개 제시합니다. 하나의 장면을 찾았다고 전체 목표를 거기에 가두지 않습니다. 현재 설정 대화는 세 번의 짧은 응답으로 끝냅니다. 일상·학업·직업 맥락 → 영어 사용 장면 → 짧은 영어 표현을 탐색하고, 실제 답변에 대한 영어 피드백과 임시 계획을 함께 제안합니다. 부족한 정보는 추정해 채우지 않고 이후 연습에서 보완합니다. 앞선 표는 참고용 질문 모음이며 모든 질문을 순서대로 묻는 설문이 아닙니다.
 
 ## 근거를 제품 행동으로 옮기기
 
