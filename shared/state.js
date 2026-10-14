@@ -3,7 +3,7 @@ export function migrate(raw){const base=initialState();if(!raw)return base;retur
 export const safeUrl=value=>{try{const u=new URL(value);return /^https?:$/.test(u.protocol)?u.origin+u.pathname:'';}catch{return '';}};
 export function material(value){if(typeof value?.text!=='string'||value.text.trim().length<20)throw Error('본문을 읽기 어려워요. 읽고 싶은 문장을 선택한 뒤 확장 아이콘을 다시 눌러주세요.');return {title:String(value.title||'현재 페이지').slice(0,300),url:safeUrl(value.url),text:value.text.trim().slice(0,6000),kind:value.kind==='activity'?'activity':'page',site:value.kind==='activity'?String(value.site||'').slice(0,120):''};}
 export function selectSkill(state,now=Date.now()){
- if(!state.curriculum.length)throw Error('먼저 코치와 목표를 정해주세요.');const last=new Map();for(const s of state.sessions)last.set(s.skillId,s);
+ if(!state.curriculum.length)throw Error('먼저 야옹 코치와 목표를 정해주세요.');const last=new Map();for(const s of state.sessions)last.set(s.skillId,s);
  const due=state.curriculum.filter(c=>last.get(c.id)?.due<=now).sort((a,b)=>last.get(a.id).due-last.get(b.id).due);
  if(due.length)return {skill:due[0],reason:'복습할 때가 된 능력을 지금 보는 내용으로 다시 연습해요.'};
  const fresh=state.curriculum.find(c=>!last.has(c.id));if(fresh)return {skill:fresh,reason:'나의 커리큘럼에서 다음으로 연습할 능력이에요.'};

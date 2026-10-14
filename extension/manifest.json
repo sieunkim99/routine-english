@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Dear Meow — 내 이야기를 기억하는 영어 고양이",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "minimum_chrome_version": "120",
   "description": "AI가 목표와 커리큘럼을 준비하고, 지금 보는 페이지로 대화와 복습을 제안합니다. 개인 OpenAI API 키를 사용합니다.",
   "permissions": ["storage", "alarms", "notifications", "sidePanel", "activeTab", "scripting", "contextMenus", "idle"],

@@ -1,1 +1,1 @@
-{"name":"dear-meow","version":"0.14.1","private":true,"type":"module","description":"A proactive Chrome English coach using your own OpenAI API key.","license":"MIT","scripts":{"dev":"node scripts/serve.mjs","build":"node scripts/build.mjs","test":"node --test"},"engines":{"node":">=22"}}
+{"name":"dear-meow","version":"0.14.2","private":true,"type":"module","description":"A proactive Chrome English coach using your own OpenAI API key.","license":"MIT","scripts":{"dev":"node scripts/serve.mjs","build":"node scripts/build.mjs","test":"node --test"},"engines":{"node":">=22"}}

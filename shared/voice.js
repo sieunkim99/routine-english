@@ -36,10 +36,10 @@ export function createVoice({Recognition, synthesis, Utterance, language='en-US'
  }
  function stop(){wanted=false;clearRestart();if(!recognition){update('idle');return Promise.resolve(transcript);}update('finishing');return new Promise(resolve=>{stopResolve=resolve;stopTimer=setTimer(()=>{generation++;const r=recognition;recognition=null;r?.abort();update('idle');settle();},1800);try{recognition.stop();}catch{update('idle');settle();}});}
  function speak(text,done=()=>{}){
-  cancel();cancelSpeech();const token=++speechGeneration;const chunks=speechChunks(speechText(text));if(!synthesis||!Utterance){onError('읽어주기가 지원되지 않아요. 코치의 답변을 화면에서 확인해주세요.');return;}
+  cancel();cancelSpeech();const token=++speechGeneration;const chunks=speechChunks(speechText(text));if(!synthesis||!Utterance){onError('읽어주기가 지원되지 않아요. 야옹 코치의 답변을 화면에서 확인해주세요.');return;}
   let selectedVoice;
   const play=i=>{if(token!==speechGeneration)return;if(i>=chunks.length){update('idle');done();return;}const u=new Utterance(chunks[i]);u.lang=selectedVoice?.lang||'en-US';u.rate=1;u.pitch=1;u.volume=1;if(selectedVoice)u.voice=selectedVoice;
-   u.onend=()=>play(i+1);u.onerror=()=>{if(token===speechGeneration){update('idle');onError('코치 음성을 재생하지 못했어요. 화면의 답변을 읽거나 다시 듣기를 눌러주세요.');}};update('speaking');synthesis.speak(u);
+   u.onend=()=>play(i+1);u.onerror=()=>{if(token===speechGeneration){update('idle');onError('야옹 코치 음성을 재생하지 못했어요. 화면의 답변을 읽거나 다시 듣기를 눌러주세요.');}};update('speaking');synthesis.speak(u);
   };
   const available=synthesis.getVoices?.()||[];
   if(available.length||!synthesis.addEventListener){selectedVoice=coachVoice(available);play(0);return;}

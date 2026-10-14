@@ -23,7 +23,7 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
     const result=await call('onboard',{profile:s.profile,messages,forcePlan:!!msg.forcePlan||!!s.onboarding.proposal||messages.filter(m=>m.role==='user').length>=3});s.onboarding.messages=[...messages,{role:'assistant',content:result.reply}];s.onboarding.proposal=result.ready?{profile:result.profile,curriculum:result.curriculum,feedback:result.feedback}:null;await save(s);return snapshot();
    }
    case 'approve':{
-    const plan=s.onboarding.proposal;if(!plan)throw Error('먼저 코치가 계획을 준비하도록 이야기해주세요.');s.profile=plan.profile;s.curriculum=plan.curriculum.map((c,i)=>({...c,id:`${c.id.slice(0,60)}-${i}`}));s.onboarding.approved=true;s.onboarding.skipped=false;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();
+    const plan=s.onboarding.proposal;if(!plan)throw Error('먼저 야옹 코치가 계획을 준비하도록 이야기해주세요.');s.profile=plan.profile;s.curriculum=plan.curriculum.map((c,i)=>({...c,id:`${c.id.slice(0,60)}-${i}`}));s.onboarding.approved=true;s.onboarding.skipped=false;s.onboarding.proposal=null;s.lastInvitation=now();await save(s);return snapshot();
    }
    case 'revise':await store.session.set({active:null});s.onboarding.approved=false;s.onboarding.proposal=null;s.onboarding.messages=[];await save(s);return snapshot();
    case 'mode':s.settings.voice=msg.voice!==false;await save(s);return snapshot();
