@@ -28,7 +28,8 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
    case 'mode':s.settings.voice=msg.voice!==false;await save(s);return snapshot();
    case 'settings':s.settings=validateSettings({...s.settings,...msg.settings});s.lastInvitation=now();await save(s);return snapshot();
    case 'invited':s.lastInvitation=now();await save(s);return snapshot();
-   case 'snooze':s.snooze=now()+Math.min(1440,Math.max(15,Number(msg.minutes)||30))*60000;await save(s);return snapshot();
+   case 'snooze':s.snooze=now()+Math.min(1440,Math.max(1,Number(msg.minutes)||30))*60000;await save(s);return snapshot();
+   case 'resume':s.snooze=0;s.lastInvitation=now();await save(s);return snapshot();
    case 'start':{
     if(snap.active)throw Error('진행 중인 대화를 먼저 마쳐주세요.');if(!s.onboarding.approved)throw Error('먼저 나의 학습 계획을 확인해주세요.');
     let source,skill,review=false;const chosen=selectSkill(s,now());let previous;

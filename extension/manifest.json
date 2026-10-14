@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "RoutineEnglish — 내 일상 속 영어 코치",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "minimum_chrome_version": "120",
   "description": "AI가 목표와 커리큘럼을 준비하고, 지금 보는 페이지로 대화와 복습을 제안합니다. 개인 OpenAI API 키를 사용합니다.",
   "permissions": ["storage", "alarms", "notifications", "sidePanel", "activeTab", "scripting", "contextMenus", "idle"],

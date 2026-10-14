@@ -16,6 +16,8 @@ async function previewSend(m){if(m.type==='snapshot')return structuredClone(prev
  else if(m.type==='finish')finish();
  else if(m.type==='hint')preview.active.hintUsed=true;
  else if(m.type==='close')preview.active=null;
+ else if(m.type==='snooze')preview.state.snooze=Date.now()+m.minutes*60000;
+ else if(m.type==='resume')preview.state.snooze=0;
  else if(m.type==='settings')preview.state.settings={...preview.state.settings,...m.settings};
  else if(m.type==='disconnect')preview.hasKey=false;
  function finish(){const a=preview.active;a.task=null;a.feedback={spokenSummary:'This is a preview, so I am not evaluating your English. In the installed extension, your coach will give personal feedback and prepare your next practice.',strength:'미리보기에서는 답변을 평가하지 않아요.',improvement:'실제 AI는 내가 쓴 표현을 바탕으로 개선점 하나를 알려줘요.',expression:'I like shared gardens because they bring people together.',nextFocus:'다른 관심사에서도 이유를 덧붙여보기',score:1};if(!preview.state.sessions.some(s=>s.id===a.id))preview.state.sessions.push({...a,at:Date.now(),due:Date.now()+86400000,skillId:a.skill.id,skillTitle:a.skill.title});}
