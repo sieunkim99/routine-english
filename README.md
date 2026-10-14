@@ -9,7 +9,7 @@
 1. Download `routine-english-extension.zip` from this repository's Releases and unzip it.
 2. In Chrome, open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose the unzipped folder containing `manifest.json`.
 3. The full-page setup opens automatically. Consent to the data notice, paste **your own OpenAI API key**, and choose a reminder interval. The extension validates the key with a small billed request.
-4. Talk with the coach **in English**, by chat or optional English voice input. It uses your own English replies to infer a tentative starting level while discovering your goal, asks a few natural follow-up questions, and drafts your goal, scope, first step and 3–5 connected learning abilities. Confirm the plan or ask for a revision.
+4. Talk with the coach **in English**, in voice-first conversation or text chat. It uses your own English replies to infer a tentative starting level while discovering your goal, asks a few natural follow-up questions, and drafts your goal, scope, first step and 3–5 connected learning abilities. Confirm the plan or ask for a revision.
 5. On a page you want to read, click the extension icon. The side panel offers **Current-page conversation** and **Review**.
 
 You do not need Node, a terminal, a connection code or a running server to use the extension. Each person supplies their own API key. Do not put a shared key in the source: it would be extractable and could create unlimited charges for its owner. A future shared-key edition needs a server with accounts and usage limits.
@@ -34,11 +34,13 @@ A notification can open review without page access. Reading a new page requires 
 
 ### Conversations and review
 
-A brief conversation runs for up to three responses or can end earlier for feedback. The coach evaluates meaning and one useful improvement, not exact-string matching. Voice conversation is the default: the coach reads its question/reply, then listens. Press **말하기 완료 · 보내기** when you are finished. Pauses never submit the turn; recognition is continuous and restarts when the browser ends it, preserving the draft. The microphone stops during coach playback and when the page is hidden. **텍스트로 채팅하기** switches to text at any time and keeps the transcript. Browser speech recognition and synthesis must be available. Speech transcripts can be corrected before sending; no pronunciation scoring is claimed.
+A brief conversation runs for up to three responses or can end earlier for feedback. Each activity targets one observable ability: attempt first, use a focused cue to repair if needed, then try one small contextual variation when ready. Help is available on request; a struggling learner gets more support instead of repeated unaided failure. The coach evaluates meaning and one useful improvement, not exact-string matching. Voice conversation is the default: the coach reads its question/reply, then listens. Press **말하기 완료 · 보내기** when you are finished. Pauses never submit the turn; recognition is continuous and restarts when the browser ends it, preserving the draft. The microphone stops during coach playback and when the page is hidden. **텍스트로 채팅하기** switches to text at any time and keeps the transcript. Browser speech recognition and synthesis must be available. Speech transcripts can be corrected before sending; no pronunciation scoring is claimed.
 
-Review prioritizes due abilities, then unpracticed abilities, then weaker recent performance. Review intervals are simple 1/2/7-day rules with hint adjustment, not SM-2 or a validated optimal schedule. All attempts are preserved. Short task scores are not overall English proficiency or a goal-completion percentage.
+Review prioritizes due abilities, then unpracticed abilities, then weaker recent performance. Review intervals are simple 1/2/7-day rules with hint adjustment, not SM-2 or a validated optimal schedule. All attempts are preserved. New hint-assisted assessments are capped at score 1 (partial/supported), even if the model assigns independent success; earlier records keep their original scores. Short task scores are not overall English proficiency or a goal-completion percentage.
 
 ## Learning foundations
+
+Read the [complete research-to-behavior design, exact prompts and evaluation rubric](docs/COACH_PROMPTS.md). The runtime prompts live in `shared/prompts.js`. A small response budget makes each session bounded; successful supported practice is distinguished from independent performance. Prompt behavior still needs live model evaluation.
 
 The design connects Ideal L2 Self (envisioning personally meaningful English use), autonomy-supportive goal choice, retrieval before revealing answers, spaced practice, reduced assistance and transfer across different content. These principles guide implementation; the product's efficacy has not been established by a learner study. Longer independent goal-relevant tasks are needed to assess actual transfer beyond short conversations.
 
@@ -70,7 +72,7 @@ Build outputs:
 - `dist/routine-english-extension.zip`: standalone installer archive.
 - `dist/web`: static installation preview with the archive; suitable for GitHub Pages.
 
-Source: `shared/ai.js` (provider requests and schemas), `shared/controller.js` (agent actions and storage), `shared/state.js` (learning/review/reminder rules), `shared/app.js` (minimal UI), `extension/background.js` (Chrome integration), `extension/extract.js` (page extraction).
+Source: `shared/prompts.js` (coaching policy), `shared/ai.js` (provider requests and schemas), `shared/controller.js` (agent actions and storage), `shared/state.js` (learning/review/reminder rules), `shared/app.js` (minimal UI), `extension/background.js` (Chrome integration), `extension/extract.js` (page extraction).
 
 Voice is synthesized by the browser; this is turn-based conversation, not the OpenAI Realtime audio API. Chrome 120+ is required.
 

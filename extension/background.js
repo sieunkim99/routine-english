@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener((message,sender,respond)=>{
 let inviting=false;
 chrome.alarms.onAlarm.addListener(async alarm=>{if(alarm.name!=='invite'||inviting)return;inviting=true;try{await ready;const {state,credential}=await chrome.storage.local.get(['state','credential']);if(!credential?.key)return;const {active}=await chrome.storage.session.get('active');if(active&&!active.feedback)return;const s=migrate(state);const activity=await chrome.idle.queryState(120);if(!canInvite(s,Date.now(),activity))return;
  const count=reviewQueue(s).length;
- await chrome.notifications.create('practice',{type:'basic',iconUrl:'icon.png',title:count?'지난 대화, 1분만 떠올려볼까요?':'지금 보는 내용으로 영어 한 문장?',message:count?`${count}가지 연습을 복습할 때예요. 코치가 다음 질문을 준비해줄게요.`:'확장 아이콘을 누르면 내 목표에 맞는 대화를 시작할 수 있어요.',buttons:[{title:count?'복습하기':'학습 열기'},{title:'30분 뒤'}]});await controller.dispatch({type:'invited'});
+ await chrome.notifications.create('practice',{type:'basic',iconUrl:'icon.png',title:count?'지난 표현, 한 문장 떠올려볼까요?':'지금 보는 내용으로 영어 한 문장?',message:count?'정답을 보기 전에 한 번 떠올려봐요. 막히면 힌트를 받고, 바쁘면 미뤄도 좋아요.':'내 목표에 맞춰 한 문장부터 연습해요. 준비되면 현재 페이지의 확장 아이콘을 눌러주세요.',buttons:[{title:count?'복습하기':'학습 열기'},{title:'30분 뒤'}]});await controller.dispatch({type:'invited'});
  }finally{inviting=false;}});
 async function openLearning(){const {state}=await chrome.storage.local.get('state');await chrome.storage.session.set({preferredView:migrate(state).sessions.length?'review':'page'});try{const win=await chrome.windows.getLastFocused();await chrome.sidePanel.open({windowId:win.id});}catch{await chrome.tabs.create({url:chrome.runtime.getURL('panel.html?view=review')});}await chrome.notifications.clear('practice');}
 chrome.notifications.onClicked.addListener(openLearning);
