@@ -41,13 +41,13 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
     const active={id:id(),source,skill,review,connection:result.connection,hint:result.hint,hintUsed:false,task:result.task||null,chunk:result.task?.chunk||'',attempts:[],messages:[{role:'assistant',content:result.question,task:result.task}],feedback:null,createdAt:now()};await store.session.set({active});return snapshot();
    }
    case 'turn':{
-    const a=snap.active;if(!a||a.feedback)throw Error('진행 중인 대화가 없어요.');const text=String(msg.text||'').trim();if(!text||text.length>4000)throw Error('답변을 한두 문장으로 입력해주세요.');
-    const attempts=[...(a.attempts||[]),{mode:a.task?.mode||'short',response:text}];const messages=[...a.messages,{role:'user',content:text}];const finish=messages.filter(m=>m.role==='user').length>=3;
+    const a=snap.active;if(!a||a.feedback)throw Error('진행 중인 대화가 없어요.');const text=String(msg.text||'').trim();if(!text||text.length>4000)throw Error('단어나 짧은 표현으로 편하게 답해주세요.');
+    const attempts=[...(a.attempts||[]),{mode:a.task?.mode||'chat',response:text}];const messages=[...a.messages,{role:'user',content:text}];const finish=messages.filter(m=>m.role==='user').length>=3;
     const result=await call(finish?'finish':'turn',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts,messages,recent:s.sessions.slice(-3)});
-    a.attempts=attempts;a.task=finish?null:result.task||null;a.messages=finish?messages:[...messages,{role:'assistant',content:result.reply,task:result.task}];a.feedback=finish?result:null;a.lastFeedback=finish?'':result.feedback;await store.session.set({active:a});if(finish)await record(s,a);return snapshot();
+    a.attempts=attempts;a.task=finish?null:result.task||null;a.messages=finish?messages:[...messages,{role:'assistant',content:result.reply,task:result.task}];a.feedback=finish?result:null;if(finish&&result.chunk)a.chunk=result.chunk;a.lastFeedback=finish?'':result.feedback;await store.session.set({active:a});if(finish)await record(s,a);return snapshot();
    }
    case 'finish':{
-    const a=snap.active;if(!a||!a.messages.some(m=>m.role==='user'))throw Error('먼저 한 번 답해보세요.');if(!a.feedback){a.feedback=await call('finish',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts:a.attempts,messages:a.messages,recent:s.sessions.slice(-3)});await store.session.set({active:a});}await record(s,a);return snapshot();
+    const a=snap.active;if(!a||!a.messages.some(m=>m.role==='user'))throw Error('먼저 한 번 답해보세요.');if(!a.feedback){a.feedback=await call('finish',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts:a.attempts,messages:a.messages,recent:s.sessions.slice(-3)});if(a.feedback.chunk)a.chunk=a.feedback.chunk;await store.session.set({active:a});}await record(s,a);return snapshot();
    }
    case 'hint':if(snap.active){snap.active.hintUsed=true;await store.session.set({active:snap.active});}return snapshot();
    case 'close':if(snap.active?.feedback)await record(s,snap.active);await store.session.set({active:null});return snapshot();
@@ -55,5 +55,5 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
    default:throw Error('지원하지 않는 요청입니다.');
   }
  })};
- async function record(s,a){if(s.sessions.some(x=>x.id===a.id))return;const at=now();s.sessions.push({id:a.id,at,due:dueAt(a.feedback.score,a.hintUsed,at),skillId:a.skill.id,skillTitle:a.skill.title,title:a.source.title,url:a.source.url,hint:a.hintUsed,chunk:a.chunk||'',attempts:a.attempts||[],messages:a.messages,feedback:a.feedback});s.lastInvitation=at;await save(s);}
+ async function record(s,a){if(s.sessions.some(x=>x.id===a.id))return;const at=now();s.sessions.push({id:a.id,at,due:!a.review&&a.feedback.chunk?at+86400000:dueAt(a.feedback.score,a.hintUsed,at),skillId:a.skill.id,skillTitle:a.skill.title,title:a.source.title,url:a.source.url,hint:a.hintUsed,chunk:a.chunk||'',attempts:a.attempts||[],messages:a.messages,feedback:a.feedback});s.lastInvitation=at;await save(s);}
  }
