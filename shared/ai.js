@@ -1,4 +1,5 @@
 import {instructionsFor,lessonContext} from './prompts.js';
+export function sourceLanguage(text){const sample=String(text||'').slice(0,6000);const hangul=(sample.match(/[가-힣]/g)||[]).length;const letters=(sample.match(/[가-힣A-Za-z]/g)||[]).length;return hangul>=12&&hangul/Math.max(letters,1)>=.2?'ko':'other';}
 const str={type:'string'};const object=properties=>({type:'object',properties,required:Object.keys(properties),additionalProperties:false});
 const profile=object({context:str,wish:str,scene:str,scope:str,personalMeaning:str,barrier:str,interests:str,currentAbility:str,firstStep:str,level:{type:'string',enum:['A1','A2','B1','B2','C1']}});
 const item=object({id:str,title:str,objective:str,hint:str,whyItMatters:str});
@@ -12,7 +13,7 @@ export const schemas={
 export function prepare(type,input){const p={};if(type==='check')return p;
  p.profile=input.profile||null;p.messages=(input.messages||[]).slice(-18).map(m=>({role:m.role==='user'?'user':'assistant',content:String(m.content||'').slice(0,4000)}));
  if(type==='onboard'){const count=(input.messages||[]).filter(m=>m.role==='user').length;p.onboarding={maxResponses:3,responsesReceived:count};p.forcePlan=!!input.forcePlan||count>=3;return p;}
- p.skill=input.skill;p.source=input.source?{title:String(input.source.title).slice(0,300),text:String(input.source.text).slice(0,6000)}:null;
+ p.skill=input.skill;p.source=input.source?{title:String(input.source.title).slice(0,300),text:String(input.source.text).slice(0,6000),language:sourceLanguage(input.source.text)}:null;
  p.lesson=lessonContext(type,input);p.review=!!input.review;p.hintUsed=!!input.hintUsed;p.recent=(input.recent||[]).slice(-3).map(s=>({skillId:s.skillId,objective:s.skillTitle,hintUsed:!!s.hint,response:s.messages?.filter(m=>m.role==='user').at(-1)?.content,feedback:s.feedback}));return p;
 }
 export function validateOutput(schema,value){if(schema.type==='object'){if(!value||typeof value!=='object'||Array.isArray(value))throw Error('AI 응답 형식을 확인하지 못했어요. 다시 시도해주세요.');for(const k of schema.required)validateOutput(schema.properties[k],value[k]);}else if(schema.type==='array'){if(!Array.isArray(value)||value.length<(schema.minItems||0)||value.length>(schema.maxItems||Infinity))throw Error('AI 계획을 읽지 못했어요. 다시 시도해주세요.');value.forEach(v=>validateOutput(schema.items,v));}else if(schema.type==='integer'){if(!Number.isInteger(value))throw Error('AI 평가 형식이 올바르지 않아요.');}else if(typeof value!==schema.type)throw Error('AI 응답 형식이 올바르지 않아요.');if(schema.enum&&!schema.enum.includes(value))throw Error('AI 응답 범위가 올바르지 않아요.');}
