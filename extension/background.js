@@ -37,7 +37,7 @@ chrome.runtime.onMessage.addListener((message,sender,respond)=>{
  if(sender.id!==chrome.runtime.id||!sender.url?.startsWith(chrome.runtime.getURL('')))return;
  const work=async()=>{await ready;if(message.type==='capture'){const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});await capture(tab);return controller.snapshot();}if(message.type==='options'){await chrome.runtime.openOptionsPage();return {};}
  if(message.type==='buddy-refresh'){await syncBuddy(true);return controller.snapshot();}
- if(!['skip-goal','snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','turn','finish','hint','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
+ if(!['skip-goal','snapshot','connect','mode','goal','approve','revise','settings','snooze','resume','review-reveal','review-rate','start','turn','finish','hint','support','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
  const result=await controller.dispatch(message);if(message.type==='settings'&&'buddyEnabled' in (message.settings||{}))await syncBuddy();return result;};
  work().then(value=>respond({ok:true,value}),error=>respond({ok:false,error:error.message||'요청을 완료하지 못했어요.'}));return true;
 });

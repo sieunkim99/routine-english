@@ -12,7 +12,7 @@ export const schemas={
  finish:object({original:str,chunk:str,meaning:str,spokenSummary:str,strength:str,improvement:str,expression:str,nextFocus:str,score:{type:'integer',enum:[0,1,2]}})
 };
 export function prepare(type,input){const p={};if(type==='check')return p;
- p.profile=input.profile||null;p.messages=(input.messages||[]).slice(-18).map(m=>({role:m.role==='user'?'user':'assistant',content:String(m.content||'').slice(0,4000),assisted:!!m.assisted,...(m.task?{task:m.task}:{})}));
+ p.profile=input.profile||null;p.messages=(input.messages||[]).slice(-18).map(m=>({role:m.role==='user'?'user':'assistant',content:String(m.content||'').slice(0,4000),assisted:!!m.assisted,...(m.task?{task:{...m.task,choices:m.task.mode==='chat'&&m.choicesShown===false?[]:m.task.choices,cue:m.task.mode==='chat'&&!m.hintShown?'':m.task.cue},choicesShown:m.choicesShown!==false}:{})}));
  if(type==='onboard'){const count=(input.messages||[]).filter(m=>m.role==='user').length;p.onboarding={maxResponses:3,responsesReceived:count};p.forcePlan=!!input.forcePlan||count>=3;return p;}
  p.flow=input.review?'review':'smalltalk';p.chunk=input.chunk||'';p.attempts=input.attempts||[];p.skill=input.skill;p.source=input.source?{title:String(input.source.title).slice(0,300),text:String(input.source.text).slice(0,6000),language:sourceLanguage(input.source.text),kind:input.source.kind==='activity'?'activity':'page',site:input.source.kind==='activity'?String(input.source.site||'').slice(0,120):''}:null;
  p.lesson=lessonContext(type,input);p.review=!!input.review;p.hintUsed=!!input.hintUsed;p.recent=(input.recent||[]).slice(-3).map(s=>({skillId:s.skillId,objective:s.skillTitle,hintUsed:!!s.hint,chunk:s.chunk||'',attempts:s.attempts||[],response:s.messages?.filter(m=>m.role==='user').at(-1)?.content,feedback:s.feedback}));return p;
@@ -29,6 +29,6 @@ export async function generate(type,input,{key,fetcher=fetch,model='gpt-4o-mini'
  if(['start','turn'].includes(type)&&(result.task.mode!=='chat'&&!result.task.chunk.trim()||result.task.mode==='choice'&&result.task.choices.length<2||result.task.mode==='gap'&&!result.task.frame.includes('___')))throw Error('연습 카드를 준비하지 못했어요. 다시 시도해주세요.');
  if(type==='onboard'&&result.ready&&(result.curriculum.length<3||!result.profile.wish.trim()))throw Error('계획을 완성하지 못했어요. 한 번 더 시도해주세요.');
  if(type==='finish'&&result.original&&!(input.messages||[]).some(m=>m.role==='user'&&String(m.content).includes(result.original)))throw Error('내 답변에 근거한 표현을 확인하지 못했어요. 다시 시도해주세요.');
- if(type==='finish'&&(input.hintUsed||input.attempts?.length&&input.attempts.every(a=>['choice','suggestion'].includes(a.mode))))result.score=Math.min(result.score,1);
+ if(type==='finish'&&(input.hintUsed||input.attempts?.length&&input.attempts.every(a=>['choice','suggestion'].includes(a.mode)||a.supported)))result.score=Math.min(result.score,1);
  return result;
 }

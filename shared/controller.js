@@ -41,18 +41,19 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
      source={title:'지난 대화 이어가기',url:'',text:`Previous objective: ${previous.skillTitle}\nPrevious learner answers: ${previous.messages.filter(m=>m.role==='user').map(m=>m.content).join('\n')}\nUseful expression to retrieve (do not reveal first): ${previous.feedback.expression}\nTarget chunk: ${previous.chunk||''}\nNext focus: ${previous.feedback.nextFocus}`};
     }else{source=material(msg.source||snap.pageContext);skill=chosen.skill;}
     const result=await call('start',{profile:s.profile,skill,source,review,chunk:previous?.chunk||'',recent:previous?[previous]:s.sessions.slice(-3)});
-    const active={id:id(),source,skill,review,connection:result.connection,sourceDetail:result.sourceDetail||'',hint:result.hint,hintUsed:false,task:result.task||null,chunk:result.task?.chunk||'',attempts:[],messages:[{role:'assistant',content:result.question,task:result.task}],feedback:null,createdAt:now()};await store.session.set({active});return snapshot();
+    const active={id:id(),source,skill,review,connection:result.connection,sourceDetail:result.sourceDetail||'',hint:result.hint,hintUsed:false,turnHintUsed:false,choicesShown:!review,task:result.task||null,chunk:result.task?.chunk||'',attempts:[],messages:[{role:'assistant',content:result.question,task:result.task,choicesShown:!review}],feedback:null,createdAt:now()};await store.session.set({active});return snapshot();
    }
    case 'turn':{
     const a=snap.active;if(!a||a.feedback)throw Error('진행 중인 대화가 없어요.');const text=String(msg.text||'').trim();if(!text||text.length>4000)throw Error('단어나 짧은 표현으로 편하게 답해주세요.');
-    const assisted=a.task?.mode==='chat'&&a.task.choices?.includes(text);const attempts=[...(a.attempts||[]),{mode:assisted?'suggestion':a.task?.mode||'chat',response:text}];const messages=[...a.messages,{role:'user',content:text,assisted:!!assisted}];const finish=messages.filter(m=>m.role==='user').length>=3;
+    const assisted=a.choicesShown!==false&&a.task?.mode==='chat'&&a.task.choices?.includes(text);const attempts=[...(a.attempts||[]),{mode:assisted?'suggestion':a.task?.mode||'chat',response:text,choicesShown:!!a.choicesShown,hintUsed:!!a.turnHintUsed,supported:!!assisted||!!a.choicesShown||!!a.turnHintUsed}];const messages=[...a.messages,{role:'user',content:text,assisted:!!assisted}];const finish=messages.filter(m=>m.role==='user').length>=3;
     const result=await call(finish?'finish':'turn',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts,messages,recent:s.sessions.slice(-3)});
-    a.attempts=attempts;a.task=finish?null:result.task||null;a.messages=finish?messages:[...messages,{role:'assistant',content:result.reply,task:result.task}];a.feedback=finish?result:null;if(finish&&result.chunk)a.chunk=result.chunk;a.lastFeedback=finish?'':result.feedback;await store.session.set({active:a});if(finish)await record(s,a);return snapshot();
+    a.attempts=attempts;a.choicesShown=false;a.turnHintUsed=false;a.task=finish?null:result.task||null;a.messages=finish?messages:[...messages,{role:'assistant',content:result.reply,task:result.task,choicesShown:false}];a.feedback=finish?result:null;if(finish&&result.chunk)a.chunk=result.chunk;a.lastFeedback=finish?'':result.feedback;await store.session.set({active:a});if(finish)await record(s,a);return snapshot();
    }
    case 'finish':{
     const a=snap.active;if(!a||!a.messages.some(m=>m.role==='user'))throw Error('먼저 한 번 답해보세요.');if(!a.feedback){a.feedback=await call('finish',{profile:s.profile,skill:a.skill,source:a.source,review:a.review,hintUsed:a.hintUsed,chunk:a.chunk,attempts:a.attempts,messages:a.messages,recent:s.sessions.slice(-3)});if(a.feedback.chunk)a.chunk=a.feedback.chunk;await store.session.set({active:a});}await record(s,a);return snapshot();
    }
-   case 'hint':if(snap.active){snap.active.hintUsed=true;await store.session.set({active:snap.active});}return snapshot();
+   case 'support':if(snap.active&&!snap.active.feedback){snap.active.choicesShown=true;const last=snap.active.messages.filter(m=>m.role==='assistant').at(-1);if(last)last.choicesShown=true;await store.session.set({active:snap.active});}return snapshot();
+   case 'hint':if(snap.active){snap.active.hintUsed=true;snap.active.turnHintUsed=true;const last=snap.active.messages.filter(m=>m.role==='assistant').at(-1);if(last)last.hintShown=true;await store.session.set({active:snap.active});}return snapshot();
    case 'close':if(snap.active?.feedback)await record(s,snap.active);await store.session.set({active:null});return snapshot();
    case 'disconnect':await store.local.remove('credential');return snapshot();
    default:throw Error('지원하지 않는 요청입니다.');
