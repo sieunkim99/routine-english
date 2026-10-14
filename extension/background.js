@@ -12,7 +12,7 @@ export async function capture(tab){const sequence=++captureSequence;try{
 function openFromAction(tab){chrome.sidePanel.open({tabId:tab.id}).catch(()=>{});capture(tab);}
 chrome.action.onClicked.addListener(openFromAction);
 chrome.contextMenus.onClicked.addListener((info,tab)=>{if(info.menuItemId==='practice')openFromAction(tab);});
-async function schedule(){await ready;const {state}=await chrome.storage.local.get('state');const s=migrate(state);if(s.onboarding.approved&&s.settings.enabled){if(!await chrome.alarms.get('invite'))await chrome.alarms.create('invite',{periodInMinutes:5,delayInMinutes:5});}else await chrome.alarms.clear('invite');}
+async function schedule(){await ready;const {state}=await chrome.storage.local.get('state');const s=migrate(state);if(s.onboarding.approved&&s.settings.enabled){const alarm=await chrome.alarms.get('invite');const period=Math.max(.5,Math.min(5,s.settings.interval));if(!alarm||alarm.periodInMinutes!==period)await chrome.alarms.create('invite',{periodInMinutes:period,delayInMinutes:period});}else await chrome.alarms.clear('invite');}
 async function setup(details){await ready;await chrome.sidePanel.setPanelBehavior({openPanelOnActionClick:false});await chrome.alarms.clear('practice');await chrome.contextMenus.removeAll();chrome.contextMenus.create({id:'practice',title:'이 내용으로 영어 대화',contexts:['selection']});await schedule();if(details?.reason==='install')chrome.runtime.openOptionsPage();}
 chrome.runtime.onInstalled.addListener(setup);chrome.runtime.onStartup.addListener(schedule);
 chrome.storage.onChanged.addListener((changes,area)=>{if(area==='local'&&changes.state)schedule();});
@@ -21,7 +21,7 @@ chrome.tabs.onUpdated.addListener(async(tabId,change)=>{if(change.status==='load
 chrome.runtime.onMessage.addListener((message,sender,respond)=>{
  if(sender.id!==chrome.runtime.id||!sender.url?.startsWith(chrome.runtime.getURL('')))return;
  const work=async()=>{await ready;if(message.type==='capture'){const [tab]=await chrome.tabs.query({active:true,lastFocusedWindow:true});await capture(tab);return controller.snapshot();}if(message.type==='options'){await chrome.runtime.openOptionsPage();return {};}
- if(!['snapshot','connect','goal','approve','revise','settings','snooze','start','turn','finish','hint','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
+ if(!['snapshot','connect','mode','goal','approve','revise','settings','snooze','start','turn','finish','hint','close','disconnect'].includes(message.type))throw Error('지원하지 않는 요청입니다.');
  const result=await controller.dispatch(message);return result;};
  work().then(value=>respond({ok:true,value}),error=>respond({ok:false,error:error.message||'요청을 완료하지 못했어요.'}));return true;
 });

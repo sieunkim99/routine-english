@@ -1,0 +1,33 @@
+# 목표 대화와 학습 동기를 연결하는 설계
+
+처음부터 ‘영어로 무엇을 하고 싶은가요?’라는 추상적인 질문에 완성된 목표를 요구하지 않습니다. 실제 장면을 출발점으로 삼고, 한 번에 한 질문만 하며 사용자 답변에 맞춰 다음 질문을 고릅니다. 대화 자체는 영어로 진행해 언어 수행과 목표 탐색을 함께 관찰합니다.
+
+## 질문의 흐름 — 고정 설문이 아니라 대화 지침
+
+| 탐색할 것 | 질문 예시 | 이후에 쓰는 곳 |
+| --- | --- | --- |
+| 최근 실제 장면 | “Think of a recent moment when English would have helped you. What were you trying to understand or say?” | 목표 상황과 첫 연습의 소재 |
+| 원하는 미래 모습 | “If that went well next time, what would you be able to do?” | profile.scene과 목표 행동 |
+| 개인적 의미 | “Why would that matter to you personally?” | profile.personalMeaning, 계획의 whyItMatters, 활동 추천 이유 |
+| 현재 어려움 | “What gets in the way for you right now?” | profile.barrier, 도움의 양과 연습 순서 |
+| 원하는 범위와 관심사 | “Where else would you like to use English?” / “What do you enjoy reading or watching?” | profile.scope와 interests, 콘텐츠 기반 대화 연결 |
+| 해볼 만한 첫 행동 | “Would starting with … feel useful to you?” | 승인할 첫걸음과 커리큘럼 |
+
+최근 장면이 없다면 가까운 미래의 현실적인 장면을 떠올리게 돕습니다. 막연한 답에는 사용자의 말과 연결되는 예시를 2–3개 제시합니다. 하나의 장면을 찾았다고 전체 목표를 거기에 가두지 않습니다. 보통 4–6회 짧은 응답 안에서 충분한 정보를 모으면 계획을 제안하되, 임의의 횟수보다 목표·개인적 의미·실제 영어 표현의 근거를 우선합니다.
+
+## 근거를 제품 행동으로 옮기기
+
+- **자기결정성이론:** 자율성·유능감·관계성을 지원하는 관점에서, 사용자의 선택과 개인적 이유를 존중하고 감당할 수 있는 행동을 제안합니다. 시험이나 직업처럼 외부 계기가 있는 목표도 정당한 것으로 다루며 죄책감이나 실패 공포를 사용하지 않습니다. [Niemiec & Ryan, 2009](https://selfdeterminationtheory.org/SDT/documents/2009_NiemiecRyan_TRE.pdf)
+- **L2 Motivational Self System:** 원하는 영어 사용 모습과 실제 학습 경험을 함께 고려합니다. 미래 장면만 상상하게 하는 대신, 관심 있는 현재 콘텐츠·실제 응답·작은 다음 행동으로 연결합니다. [Dörnyei, 2019](https://pressto.amu.edu.pl/index.php/ssllt/article/view/18533)
+
+위 흐름은 연구를 참고한 **제품 설계 제안**이며, 이 특정 질문 순서나 제품의 동기·학습 효과를 검증한 연구 결과는 아닙니다. 짧은 대화의 임시 수준도 공인 CEFR 평가가 아닙니다. 실제 사용에서 계획의 개인적 관련성, 시작 부담, 지속 의향과 목표 상황의 수행을 별도로 확인해야 합니다.
+
+## 음성 대화
+
+기본은 음성입니다. 사용자가 ‘음성 대화 시작’으로 마이크를 허용하면 코치가 질문을 읽고, 이어서 사용자의 말을 듣습니다. 침묵은 제출 신호가 아닙니다. 브라우저가 인식을 끝내도 다시 연결하며 기존 전사를 유지하고, 사용자가 ‘말하기 완료 · 보내기’를 눌렀을 때만 AI에 보냅니다. 코치가 말하는 동안 마이크를 중단해 음성을 다시 인식하지 않게 합니다. 텍스트로 전환하거나 화면을 떠나면 녹음과 재연결을 중단합니다.
+
+녹음된 오디오 자체를 RoutineEnglish/OpenAI에 보내지 않으며, 브라우저 음성 인식 제공자는 오디오를 처리할 수 있습니다. 인식 오류를 수정하려면 텍스트로 전환할 수 있습니다. 브라우저·기기·권한·네트워크에 따라 음성 인식과 읽어주기 사용 여부가 달라집니다.
+
+## 알림 간격
+
+앱의 15분 제한은 없애고 양수 소수도 받습니다. 예를 들어 0.5분은 30초, 1분은 1분입니다. 일반 배포된 Chrome 확장의 예약 알림은 최소 30초보다 자주 실행할 수 없으며 실제 실행은 더 늦어질 수 있습니다. 이 플랫폼 제약을 앱의 입력 제한과 구분해 안내합니다. [Chrome alarms 문서](https://developer.chrome.com/docs/extensions/reference/api/alarms)

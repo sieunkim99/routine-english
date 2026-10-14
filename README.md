@@ -18,7 +18,7 @@ This is an unpacked extension release, not a Chrome Web Store listing. To update
 
 ## What the agent does
 
-- **Understand:** a short adaptive **English** conversation discovers the desired future self, personally meaningful goal and scope while observing vocabulary, sentence construction and comprehension. The proposed level is a tentative starting point, not a certified CEFR assessment. No profile forms.
+- **Understand:** a short adaptive **English** conversation discovers the desired future self, personally meaningful goal and scope while observing vocabulary, sentence construction and comprehension. The proposed level is a tentative starting point, not a certified CEFR assessment. No profile forms. Start with a concrete recent English-use moment, then discover a desired future scene, personal meaning, obstacles and interests. Each proposed ability explains why it serves that person’s goal.
 - **Plan:** AI analyses that conversation into a provisional goal and specific, connected curriculum. The learner only confirms the direction or describes a change.
 - **Act:** a local rule checks the chosen interval and time window while the computer is active. The extension proactively suggests learning through Chrome notifications. No LLM polling or continuous page monitoring.
 - **Observe:** page text plus the curriculum, level and recent performance guide the opening question and follow-up dialogue. The coach reacts to actual answers and offers one useful improvement.
@@ -28,13 +28,13 @@ The everyday panel has only **Current page** and **Review**. Settings, goal chan
 
 ### Proactive reminders
 
-Choose an interval from 15–480 minutes (default 60) and a daytime window (default 09:00–22:00). Conditions are checked every five minutes, so a notification may arrive up to approximately five minutes after the chosen interval, or later after computer sleep. Reminders are skipped when the machine is idle/locked or a learning conversation is underway. Completing learning resets the interval. Notifications offer learning or a 30-minute snooze; macOS may show notification buttons differently. OS notification settings can suppress notifications. Chrome must be running.
+Choose any positive interval in minutes, including decimals (default 60; for example 0.5 for 30 seconds or 1 for one minute) and a daytime window (default 09:00–22:00). The check period follows the chosen interval up to five minutes, with a 30-second platform floor. Chrome may delay alarms further, especially after sleep. There is no 15-minute product minimum; input below 0.5 minutes cannot make packaged Chrome alarms run more frequently than every 30 seconds. Reminders are skipped when the machine is idle/locked or a learning conversation is underway. Completing learning resets the interval. Notifications offer learning or a 30-minute snooze; macOS may show notification buttons differently. OS notification settings can suppress notifications. Chrome must be running.
 
 A notification can open review without page access. Reading a new page requires clicking the extension icon on that page; the notification does not grant `activeTab` access. If Chrome does not permit opening a side panel from a notification, the extension opens the learning view in a tab.
 
 ### Conversations and review
 
-A brief conversation runs for up to three responses or can end earlier for feedback. The coach evaluates meaning and one useful improvement, not exact-string matching. Reading aloud and optional English speech-to-text are supported where the browser provides them. Speech transcripts can be corrected before sending; no pronunciation scoring is claimed.
+A brief conversation runs for up to three responses or can end earlier for feedback. The coach evaluates meaning and one useful improvement, not exact-string matching. Voice conversation is the default: the coach reads its question/reply, then listens. Press **말하기 완료 · 보내기** when you are finished. Pauses never submit the turn; recognition is continuous and restarts when the browser ends it, preserving the draft. The microphone stops during coach playback and when the page is hidden. **텍스트로 채팅하기** switches to text at any time and keeps the transcript. Browser speech recognition and synthesis must be available. Speech transcripts can be corrected before sending; no pronunciation scoring is claimed.
 
 Review prioritizes due abilities, then unpracticed abilities, then weaker recent performance. Review intervals are simple 1/2/7-day rules with hint adjustment, not SM-2 or a validated optimal schedule. All attempts are preserved. Short task scores are not overall English proficiency or a goal-completion percentage.
 
@@ -50,7 +50,7 @@ The key is kept in trusted-context-only `chrome.storage.local`, not an encrypted
 
 A selected passage or extracted page excerpt up to 6,000 characters is staged locally when you invoke the extension. You can inspect it before starting. The start action sends that content and relevant learning context to OpenAI under initial consent. The source is treated as untrusted learning material, not as instructions. API calls have no browser automation tools.
 
-Permissions: storage, alarms, notifications, idle, sidePanel, activeTab, scripting, contextMenus. The sole persistent host permission is `https://api.openai.com/*`; there is no all-sites host permission or local-server permission. Restricted Chrome pages, some PDFs, embedded frames, canvas, images and videos may not yield usable text. Prefer selecting article text and clicking the icon. See [PRIVACY.md](PRIVACY.md).
+Permissions: storage, alarms, notifications, idle, sidePanel, activeTab, scripting, contextMenus. The sole persistent host permission is `https://api.openai.com/*`; there is no all-sites host permission or local-server permission. Restricted Chrome pages, some PDFs, embedded frames, canvas, images and videos may not yield usable text. Prefer selecting article text and clicking the icon. See [PRIVACY.md](PRIVACY.md) and [motivation/voice design](docs/MOTIVATION_DESIGN.md).
 
 ## Develop and preview
 
@@ -71,6 +71,8 @@ Build outputs:
 - `dist/web`: static installation preview with the archive; suitable for GitHub Pages.
 
 Source: `shared/ai.js` (provider requests and schemas), `shared/controller.js` (agent actions and storage), `shared/state.js` (learning/review/reminder rules), `shared/app.js` (minimal UI), `extension/background.js` (Chrome integration), `extension/extract.js` (page extraction).
+
+Voice is synthesized by the browser; this is turn-based conversation, not the OpenAI Realtime audio API. Chrome 120+ is required.
 
 Tests use mocked provider responses and Chrome APIs to check key privacy, goal-to-plan flow, real request format, answer preservation, adaptive review, reminders and extraction. A user API key is required to verify real model output, billing and quality. Native Chrome installation and microphone/OS notification delivery also require device verification.
 

@@ -1,6 +1,6 @@
 # RoutineEnglish Privacy
 
-RoutineEnglish 0.3 uses your own OpenAI API key. There is no RoutineEnglish account or application server.
+RoutineEnglish 0.4 uses your own OpenAI API key. There is no RoutineEnglish account or application server.
 
 ## What stays on your computer
 
@@ -12,7 +12,7 @@ A captured page excerpt and an unfinished practice conversation are kept in `chr
 
 When you connect a key, a small test request is sent directly to `https://api.openai.com/v1/responses` to verify access. This incurs a small API charge. When you send a goal message, start a conversation, answer a practice question or request feedback, the relevant goal, bounded page excerpt or review material, recent learning feedback and messages are sent directly to OpenAI. API usage is billed to your OpenAI account. We set `store:false`; this is not a claim of zero provider logging or retention. See [OpenAI API data controls](https://developers.openai.com/api/docs/guides/your-data).
 
-Speech input is optional and uses your browser's SpeechRecognition service. Audio may be processed by the browser provider. Check the transcript before sending. Speech recognition is not pronunciation assessment.
+Voice is the default interaction mode, but microphone access starts only after a user action. You can switch to text. Speech input uses your browser’s SpeechRecognition service; pauses do not submit, and only the explicit completion action sends the transcript to OpenAI. Coach playback stops recognition, and switching to text or hiding the page cancels recording/restart. Audio may be processed by the browser provider. Check the transcript before sending. Speech recognition is not pronunciation assessment.
 
 ## Page access and reminders
 
