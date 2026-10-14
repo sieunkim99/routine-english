@@ -15,7 +15,7 @@ test('worker captures only on gesture, notifies proactively without API calls an
  const state=initialState();state.consent=true;state.onboarding.approved=true;state.settings.start=0;state.settings.end=24;await local.set({state,credential:{key:'test-key-not-transmitted'}});
  await listeners.alarm({name:'invite'});assert.equal(notifications,1);assert.equal(captures,1);await listeners.alarm({name:'invite'});assert.equal(notifications,1);
  state.lastInvitation=0;await local.set({state});activity='locked';await listeners.alarm({name:'invite'});assert.equal(notifications,1);
- state.settings.interval=.1;await local.set({state});await listeners.startup();assert.equal(scheduled.at(-1).periodInMinutes,.5);activity='active';await listeners.notificationButton('practice',1);assert.ok(local.data.state.snooze>Date.now());
+ state.settings.interval=.1;await local.set({state});await listeners.startup();assert.equal(scheduled.at(-1).periodInMinutes,.5);chrome.management={getSelf:async()=>({installType:'development'})};await listeners.startup();assert.equal(scheduled.at(-1).periodInMinutes,.1);activity='active';await listeners.notificationButton('practice',1);assert.ok(local.data.state.snooze>Date.now());
  const snapshot=await new Promise(resolve=>listeners.message({type:'snapshot'},{id:'a'.repeat(32),url:`chrome-extension://${'a'.repeat(32)}/panel.html`},resolve));assert.equal(snapshot.ok,true);assert.doesNotMatch(JSON.stringify(snapshot),/test-key-not-transmitted/);
  assert.equal(listeners.message({type:'snapshot'},{id:'a'.repeat(32),url:'https://example.com'},()=>{}),undefined);
  await listeners.activated({tabId:11});assert.equal(session.data.pageContext,null);
