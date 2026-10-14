@@ -1,0 +1,27 @@
+// Isolated content script: displays a friend; does not read the page or use API credentials.
+(()=>{
+ const id='routine-english-buddy';if(document.getElementById(id))return;
+ const host=document.createElement('div');host.id=id;const root=host.attachShadow({mode:'closed'});let quietUntil=0,timer;
+ root.innerHTML=`<style>
+ :host{all:initial;position:fixed;right:22px;bottom:24px;z-index:2147483646;font-family:system-ui,sans-serif;}
+ .friend{position:relative;display:flex;align-items:flex-end;gap:8px;}
+ button{font:inherit;cursor:pointer;border:none;}
+ .cat{width:62px;height:68px;background:transparent;padding:0;filter:drop-shadow(0 3px 5px #0002);transform-origin:bottom;}
+ .cat:hover{transform:translateY(-3px)}svg{width:100%;height:100%}.eye{animation:blink 8s infinite;transform-origin:center;}
+ .bubble{display:none;position:absolute;bottom:80px;right:0;width:190px;padding:14px 16px;line-height:1.45;background:#fffdf7;color:#354839;border:1px solid #d9e2d3;border-radius:18px 18px 4px 18px;box-shadow:0 4px 16px #0002;font-size:13px;text-align:left;}
+ .offer .bubble,.friend:hover .bubble{display:block}.offer .cat{animation:wave .55s ease-in-out 4;}
+ .dots{background:#eef4e9;border-radius:50%;color:#475a40;padding:3px 7px;font-size:14px;}
+ .menu{display:none;position:absolute;bottom:76px;right:0;padding:10px;background:white;border:1px solid #dce3d7;border-radius:14px;box-shadow:0 4px 15px #0002;}
+ .menu.open{display:grid;gap:8px}.menu button{white-space:nowrap;padding:8px;border-radius:8px;background:#f0f5ec;color:#334a36;}
+ .quiet{opacity:.65}.quiet .eye{animation:none}@keyframes wave{50%{transform:rotate(-10deg) translateY(-6px)}}@keyframes blink{0%,44%,48%,100%{transform:scaleY(1)}46%{transform:scaleY(.12)}}
+ @media(prefers-reduced-motion:reduce){.cat,.eye{animation:none!important}}
+ </style><div class="friend"><button class="bubble" aria-label="고양이와 영어 스몰톡 시작">여기서 무슨 이야기 중이야? 눌러서 영어로 이야기하자 🐾</button><button class="cat" aria-label="현재 페이지로 고양이와 영어 스몰톡"><svg viewBox="0 0 80 90" aria-hidden="true"><path d="M58 69Q83 63 71 43" fill="none" stroke="#deaa72" stroke-width="9" stroke-linecap="round"/><ellipse cx="38" cy="63" rx="22" ry="22" fill="#edc18d"/><path d="M17 36L17 10L32 22L45 22L60 10L60 37Z" fill="#edc18d"/><path d="M21 24L21 16L29 24M48 24L56 16L56 26" fill="#efafa6"/><ellipse cx="39" cy="36" rx="25" ry="21" fill="#edc18d"/><g class="eye" fill="#384735"><ellipse cx="30" cy="35" rx="2.8" ry="3.4"/><ellipse cx="49" cy="35" rx="2.8" ry="3.4"/></g><path d="M36 43L40 46L44 43" fill="#bd7871"/><path d="M40 47Q35 52 32 48M40 47Q45 52 48 48" fill="none" stroke="#6b715a" stroke-width="1.4"/><path d="M23 43L9 40M23 48L8 49M55 43L69 40M55 48L70 49" stroke="#ad835d" stroke-width="1.4"/><ellipse cx="28" cy="81" rx="10" ry="5" fill="#f6d8b1"/><ellipse cx="49" cy="81" rx="10" ry="5" fill="#f6d8b1"/></svg></button><button class="dots" aria-label="고양이 설정">⋯</button><div class="menu"><button data-action="quiet">1시간 조용히 기다리기</button><button data-action="settings">학습 설정</button></div></div>`;
+ const friend=root.querySelector('.friend'),bubble=root.querySelector('.bubble');
+ function setState(s){if(!s?.enabled){host.remove();clearTimeout(timer);chrome.runtime.onMessage.removeListener(handleMessage);return;}quietUntil=s.quietUntil||0;friend.classList.toggle('quiet',quietUntil>Date.now());if(quietUntil>Date.now()){friend.classList.remove('offer');bubble.textContent='조용히 기다릴게. 원하면 눌러서 이야기해 🐾';}else bubble.textContent='현재 이야기로 영어 스몰톡 해볼까? 🐾';}
+ async function start(e){if(!e.isTrusted)return;friend.classList.remove('offer');bubble.textContent='대화를 준비하고 있어…';try{const r=await chrome.runtime.sendMessage({type:'buddy-start'});if(!r?.ok)throw Error(r?.error);bubble.textContent='코치 창에서 이어서 이야기해 🐾';}catch{bubble.textContent='확장을 새로고침하거나 ⌘⇧Y로 열어줘.';friend.classList.add('offer');}}
+ root.querySelector('.cat').addEventListener('click',start);bubble.addEventListener('click',start);
+ root.querySelector('.dots').addEventListener('click',e=>{if(e.isTrusted)root.querySelector('.menu').classList.toggle('open');});
+ root.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',async e=>{if(!e.isTrusted)return;root.querySelector('.menu').classList.remove('open');const r=await chrome.runtime.sendMessage({type:b.dataset.action==='quiet'?'buddy-quiet':'buddy-settings'});if(r?.value)setState(r.value);}));
+ const handleMessage=(m,_,respond)=>{if(m.type==='buddy-state'){setState(m);respond({ok:true});}if(m.type==='buddy-invite'&&quietUntil<=Date.now()&&document.visibilityState==='visible'){friend.classList.add('offer');bubble.textContent=m.review?'배운 표현 하나 떠올려볼까? 눌러서 이 화면 이야기부터 해도 좋아 🐾':'이 화면에서 재미있는 이야기 발견했어? 영어로 나눠보자 🐾';clearTimeout(timer);timer=setTimeout(()=>friend.classList.remove('offer'),12000);respond({ok:true});}};chrome.runtime.onMessage.addListener(handleMessage);
+ document.documentElement.append(host);chrome.runtime.sendMessage({type:'buddy-status'}).then(r=>setState(r?.value)).catch(()=>host.remove());
+})();

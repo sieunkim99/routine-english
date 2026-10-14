@@ -1,6 +1,6 @@
 # RoutineEnglish: 교육·심리 기반 코치 프롬프트
 
-작성: 2026-10-14 · 프롬프트 버전 `2026-10-14.7` · 제품 0.9.0
+작성: 2026-10-14 · 프롬프트 버전 `2026-10-14.8` · 제품 0.11.0
 
 **설계 원칙: 시작을 위한 결정은 에이전트가 줄이고, 학습에 필요한 회상·표현·수정은 학습자가 수행한다.**
 
@@ -123,6 +123,9 @@
 
 0.9.0: 새 페이지 학습은 짧은 스몰톡 → 대화 종료 후 실제 발언 기반 표현 제안 → 다음 날 표현 복습. 선택·빈칸 학습은 복습에 적용한다. 아래 실제 프롬프트를 기준으로 한다.
 
+
+0.10.0의 실제 복습 화면은 모델이 새 대화를 만드는 방식이 아니라 저장된 완성 표현 카드와 간격 조절 규칙을 사용한다. finish의 meaning은 카드 앞면, expression은 뒷면이다. review 모델 지침은 이전 대화 호환용 경로이며 기본 UI는 이를 호출하지 않는다.
+
 ### common
 
 ```text
@@ -204,6 +207,7 @@ Evaluate the target chunk and its current-page communicative use; treat the sele
 strength: short Korean observation, preferably quoting a brief actual learner phrase. If the objective was not achieved, describe the attempt accurately without invented praise.
 improvement: ONE actionable Korean suggestion. If language was already valid, label an optional extension as optional, not a correction.
 For review, expression: one brief natural English example using the practiced chunk, preserving the learner's intended meaning. Do not introduce a new unrelated chunk. It is acceptable to show the full expression now that practice has finished; label alternatives in surrounding feedback rather than claiming a single right answer. If intent was unclear, use a simple relevant example without attributing it to the learner.
+meaning: one concise Korean meaning/intention of the COMPLETE expression, phrased as a retrieval cue without English answer leakage. It will appear on a flashcard before the expression is revealed. If expression is empty, meaning is empty.
 nextFocus: one concrete future retrieval/transfer action, including whether a cue is still needed. This feeds the next session; do not claim to have rescheduled it yourself.
 Choice-only success is recognition, never score 2. A correct gap response without answer/choice/hint exposure in that task is evidence of cued chunk retrieval, not entire-skill mastery. A personalized short slot shows usage, not necessarily recall of the fixed chunk. Review scheduling should conservatively reflect these differences.
 score 0: central objective not yet demonstrated or substantial modeling needed; 1: partly achieved, or achieved with hints/model-dependent repair; 2: clearly achieved in a meaningful independent response. hintUsed=true caps score at 1. Even with hintUsed=false inspect assistant messages for supplied answers/models: copying or lightly editing these is not independent recall. A later fresh application can be noted but does not prove durable mastery. Never infer global proficiency or retention from this score.

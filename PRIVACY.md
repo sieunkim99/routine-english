@@ -1,6 +1,6 @@
 # RoutineEnglish Privacy
 
-RoutineEnglish 0.4 uses your own OpenAI API key. There is no RoutineEnglish account or application server.
+RoutineEnglish uses your own OpenAI API key. There is no RoutineEnglish account or application server.
 
 ## What stays on your computer
 
@@ -16,12 +16,12 @@ Voice is the default interaction mode, but microphone access starts only after a
 
 ## Page access and reminders
 
-Pages are read only after you click the extension action or the selection context menu. Only selected text or an extracted excerpt (up to 6,000 characters) is used. Page input fields, forms, hidden text and navigation are excluded from automatic extraction. Some protected pages, PDFs, embedded frames, videos and image-only pages cannot be extracted. The extension does not continuously capture screens or send browsing history.
+Pages are read after you invoke the action, shortcut or selection context menu, or click the enabled floating buddy to start small talk. Only selected text or an extracted excerpt (up to 6,000 characters) is used. Page input fields, forms, hidden text and navigation are excluded from automatic extraction. Some protected pages, PDFs, embedded frames, videos and image-only pages cannot be extracted. The extension does not continuously capture screens or send browsing history. The optional buddy requests HTTP/HTTPS host access only when you enable it, to display its UI across websites. Its content script displays the cat and handles clicks/invitations; the worker reads page content when you click it to start. The buddy receives only enabled/quiet status, never your key, profile or learning records. Turning the buddy off unregisters it and removes the optional host grants. Required OpenAI host access remains for direct API use.
 
 The `idle` permission checks only whether the computer is active, idle or locked at reminder checks. It does not read keystrokes, screen contents or other applications. Alarms and notifications use your selected interval and time window without AI calls. Reminder state remains local.
 
 ## Your controls
 
-You consent before initial API connection. Starting a page conversation sends the shown excerpt; you can inspect it first. You can pause reminders, change goals, and delete the saved key. Removing the extension deletes its local learning data. There are no analytics, ads, tracking services or shared provider credentials.
+You consent before initial API connection. The icon/shortcut stages an excerpt you can inspect before starting. Clicking the enabled buddy starts a page conversation directly and sends the extracted excerpt under the initial consent. Completed expressions, meanings and self-rated review history stay local; expression card review makes no AI requests. You can pause reminders, change goals, and delete the saved key. Removing the extension deletes its local learning data. There are no analytics, ads, tracking services or shared provider credentials.
 
 The public website is a clearly labelled installation preview using fixed example conversations. It never requests a real API key and stores only preview state in that tab's sessionStorage.

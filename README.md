@@ -1,66 +1,66 @@
-# RoutineEnglish 🌱
+# RoutineEnglish 🐾
 
-**An English coach that remembers your goal and helps you practice with what you are already reading.**
+**지금 보고 있는 이야기로 영어 스몰톡을 하고, 대화에서 배운 표현을 간격을 두고 복습하는 Chrome 코치입니다.**
 
-**영어로 하고 싶은 일을 AI와 이야기하면, 코치가 목표와 커리큘럼을 준비합니다. 평소에는 현재 페이지로 대화하거나 지난 대화를 복습하는 두 가지에만 집중합니다.**
+작은 고양이를 누르면 현재 페이지의 맥락으로 대화를 시작합니다. 한국어 글도 소재가 됩니다. 사용자의 목표는 난이도와 대화 능력을 조절하고, 현재 콘텐츠가 이야기의 주제를 정합니다.
 
-## Install — no server needed
+[최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [사용자 스터디 가이드](USER_STUDY_GUIDE.md) · [설치 전 미리보기](https://sieunkim99.github.io/routine-english/) · [고양이 디자인 미리보기](https://sieunkim99.github.io/routine-english/buddy-demo.html)
 
-1. Download `routine-english-extension.zip` from this repository's Releases and unzip it.
-2. In Chrome, open `chrome://extensions`, enable **Developer mode**, select **Load unpacked**, and choose the unzipped folder containing `manifest.json`.
-3. The full-page setup opens automatically. Consent to the data notice, paste **your own OpenAI API key**, and choose a reminder interval. The extension validates the key with a small billed request.
-4. Talk with the coach **in English**, in voice-first conversation or text chat. It uses your own English replies to infer a tentative starting level while discovering your goal, collects up to three short replies about daily context, a desired English-use situation and a small English sample, and drafts your goal, scope, first step and 3–5 connected learning abilities. Read specific English feedback on your actual answers, then confirm the plan or ask for a revision.
-5. In Chrome, open any webpage and press **⌘⇧Y** on Mac or **Ctrl+Shift+Y** on Windows/Linux. You can also use the puzzle-shaped Extensions menu to pin RoutineEnglish, then click its icon. The side panel offers **Current-page conversation** and **Review**.
+## 처음 한 번 설정
 
-You do not need Node, a terminal, a connection code or a running server to use the extension. Each person supplies their own API key. Do not put a shared key in the source: it would be extractable and could create unlimited charges for its owner. A future shared-key edition needs a server with accounts and usage limits.
+1. 설치 ZIP을 다운로드해 압축을 풉니다.
+2. Chrome 주소창에 `chrome://extensions` → **개발자 모드** → **압축해제된 확장 프로그램 로드** → `manifest.json`이 있는 폴더를 선택합니다.
+3. 자동으로 열린 설정에서 데이터 전달 안내에 동의하고 **본인의 OpenAI API 키**를 입력합니다. 연결 확인에 작은 API 요청이 발생합니다. 서버·터미널은 필요 없습니다.
+4. 일상 맥락, 원하는 영어 사용 장면, 관심사를 **세 번의 짧은 영어 대화**로 알려줍니다. 음성이 기본이며 텍스트로 바꿀 수 있습니다. 실제 답변의 영어 피드백과 임시 수준·계획을 확인하고 승인합니다.
+5. **학습 설정 → 고양이 친구 켜기**를 누르고 사이트 접근 권한에 동의합니다. 고양이가 웹페이지 모서리에 표시됩니다. 이 기능은 선택 사항입니다.
 
-This is an unpacked extension release, not a Chrome Web Store listing. To update it, replace the files and click Reload on its card in `chrome://extensions`.
+현재 Chrome 웹 스토어 등록 전 버전입니다. Chrome 120 이상이 필요합니다. 키 사용 요금은 본인 OpenAI 계정에 발생하며, ChatGPT 구독과 별개입니다. 키를 다른 사람에게 보내거나 소스에 넣지 마세요.
 
-## What the agent does
+## 평소에는 두 가지
 
-- **Understand:** a short adaptive **English** conversation discovers the desired future self, personally meaningful goal and scope while observing vocabulary, sentence construction and comprehension. The proposed level is a tentative starting point, not a certified CEFR assessment. No profile forms. Start with a concrete recent English-use moment, then discover a desired future scene, personal meaning, obstacles and interests. Each proposed ability explains why it serves that person’s goal.
-- **Plan:** AI analyses that conversation into a provisional goal and specific, connected curriculum. The learner only confirms the direction or describes a change.
-- **Act:** a local rule checks the chosen interval and time window while the computer is active. The extension proactively suggests learning through Chrome notifications. No LLM polling or continuous page monitoring. When readable text is unavailable, an explicit shortcut/icon invocation can still stage only the site name as activity context. The coach asks what you are actually doing there in English; it never claims to see an Instagram post or image.
-- **Observe:** page text plus the curriculum, level and recent performance guide the opening question and follow-up dialogue. The coach reacts to actual answers and offers one useful improvement.
-- **Adapt:** feedback, hint use and all attempts are saved automatically. Review dates and recent difficulty select the next ability; recent responses and feedback inform the next AI activity.
+### 지금 화면으로 스몰톡
 
-The everyday panel has only **Current page** and **Review**. Settings, goal changes and curriculum details live in the extension's full-page settings website, opened with the gear icon. The settings website and panel use the same extension storage automatically.
+고양이를 누르면 해당 페이지를 가져와 짧게 이야기합니다. 게시물의 책·문학·취미 같은 실제 내용이 주제가 됩니다. 사이트명이나 직업만으로 연구 소개를 반복하지 않습니다. 본문이 읽히지 않으면 사이트 정보만으로 지금 무엇을 하는지 묻고, 이미지나 게시물을 봤다고 주장하지 않습니다.
 
-### Proactive reminders
+단어·짧은 구로 답해도 괜찮습니다. 코치는 뜻에 반응하고 대화가 끝난 뒤 **내가 실제로 했던 말 → 자연스러운 대안 하나**를 알려줍니다. 이미 자연스러운 말은 선택 가능한 다른 표현으로 설명합니다. 짧은 대화는 최대 세 번의 응답 또는 조기 종료로 마무리합니다.
 
-In settings, choose a system notification or a small Chrome chat popup. Choose an interval or specific local times such as `14:00, 18:30`, within the permitted daytime window. The learning view offers **회의 전 방해금지** with a duration (default 60 minutes, quick 30 minutes) and resume control. It suppresses RoutineEnglish invitations and closes any open invitation. Popups make no AI call until you start and never play sound automatically. No new page-reading permission is granted by a popup. Chrome must be running; scheduled invitations can be delayed and are eligible only within five minutes after their time, so missed invitations do not accumulate.
+마이크는 **음성 대화 시작**을 눌렀을 때 요청합니다. 잠깐 쉬어도 자동 제출되지 않으며 **말하기 완료 · 보내기**로 제출합니다. 코치가 말할 때와 화면이 숨겨질 때는 녹음을 멈춥니다. 브라우저 음성 제공자가 오디오를 처리할 수 있으며 발음 평가는 하지 않습니다.
 
-Choose any positive interval in minutes, including decimals (default 60; for example 0.5 for 30 seconds or 1 for one minute) and a daytime window (default 09:00–22:00). The check period follows the chosen interval up to five minutes, with a 30-second platform floor. Chrome may delay alarms further, especially after sleep. There is no 15-minute product minimum. Packaged Chrome alarms cannot run more frequently than every 30 seconds; the current unpacked/developer-mode installation is exempt, so its scheduler honors shorter positive intervals for user studies. Timing may still be delayed. We inspect only our own install type with management.getSelf(), which requires no management permission. Reminders are skipped when the machine is idle/locked or a learning conversation is underway. Completing learning resets the interval. Notifications offer learning or a 30-minute snooze; macOS may show notification buttons differently. OS notification settings can suppress notifications. Chrome must be running.
+고양이를 켜지 않아도 Mac **⌘⇧Y**, Windows/Linux **Ctrl+Shift+Y** 또는 Chrome 오른쪽 위 **퍼즐 모양 확장 프로그램 → RoutineEnglish 고정**으로 열 수 있습니다. 단축키 충돌은 `chrome://extensions/shortcuts`에서 변경합니다.
 
-A notification can open review without page access. Reading a new page requires clicking the extension icon on that page; the notification does not grant `activeTab` access. If Chrome does not permit opening a side panel from a notification, the extension opens the learning view in a tab.
+### 완성 표현 카드 복습
 
-### Conversations and review
+대화에서 배운 표현을 각각 저장합니다. **뜻·상황을 보고 떠올리기 → 완성된 표현 보기 → 듣기 → 기억 상태 선택**으로 복습합니다. 과거 대화를 그대로 다시 진행하거나 전체 문장을 타이핑할 필요가 없습니다. ‘완성된 표현 모아보기’에서 전체 표현과 다음 날짜도 볼 수 있습니다.
 
-Current-page learning is a short English small-talk conversation, up to three learner responses or early finish. The page's actual topic leads; the coach reacts to the learner's meaning and accepts a word or short phrase. Corrections and better-expression suggestions come after the conversation, unless help or clarification is needed during it. The final view shows an actual learner quote and one optional natural alternative. Useful chunks from this feedback are saved for next-day retrieval review. Existing choice/gap/short tasks are used for review rather than imposed before small talk.
+초기 간격은 **10분 → 1일 → 3일 → 7일 → 14일 → 30일**입니다. 잘 떠올리면 늘리고, 힘들거나 잊었다면 줄입니다. 망각·회상·간격 학습 연구를 참고한 초기 규칙이며 개인의 기억률을 측정한 정확한 망각곡선이나 검증된 최적 간격은 아닙니다. 버튼은 자기평가입니다. 카드 복습에는 추가 AI 호출이 없습니다. [자세한 복습 설계](docs/EXPRESSION_REVIEW.md)
 
-Voice conversation is the default, with text switching at any time. The coach reads its question/reply; explicitly starting voice input requests microphone access. Press **말하기 완료 · 보내기** when finished. Pauses never submit the turn; recognition restarts when the browser ends it, preserving the draft. The microphone stops during coach playback and when the page is hidden. Browser voice availability varies; no pronunciation scoring is claimed.
+## 제안과 회의 전 방해금지
 
-Review prioritizes due abilities, then unpracticed abilities, then weaker recent performance. Review intervals are simple 1/2/7-day rules with hint adjustment, not SM-2 or a validated optimal schedule. All attempts are preserved. New hint-assisted assessments are capped at score 1 (partial/supported), even if the model assigns independent success; earlier records keep their original scores. Short task scores are not overall English proficiency or a goal-completion percentage.
+학습 설정에서 **고양이가 말 걸기 / 작은 채팅창 팝업 / 알림** 중 하나를 선택하고, 일정 간격 또는 정해진 시각(예: `14:00, 18:30`)을 정합니다. 고양이는 제안 시 잠깐 움직이며 말풍선을 표시합니다. 누르지 않으면 자동으로 대화를 시작하거나 API를 호출하지 않습니다.
 
-## Learning foundations
+회의 전 코치 화면의 **회의 전 방해금지**, 또는 고양이 옆 **⋯ → 1시간 조용히 기다리기**를 선택합니다. 이 서비스의 제안을 멈추며 종료 시각 뒤 자동으로 다시 제안할 수 있습니다. 앱 내 제안 제어이며 회의를 자동 감지하는 기능은 아닙니다.
 
-Read the [complete research-to-behavior design, exact prompts and evaluation rubric](docs/COACH_PROMPTS.md). The runtime prompts live in `shared/prompts.js`. A small response budget makes each session bounded; successful supported practice is distinguished from independent performance. Prompt behavior still needs live model evaluation.
+컴퓨터가 쉬거나 잠겼을 때, 학습 중, 방해금지 중에는 제안을 건너뜁니다. Chrome이 실행 중이어야 하며 실제 표시 시각은 지연될 수 있습니다. 정해진 시각의 제안은 이후 5분 안에서만 한 번 가능하고 놓친 것을 몰아서 보여주지 않습니다. 일반 패키지의 Chrome 알람은 최소 30초 제약이 있고 개발자 모드 설치는 예외입니다.
 
-The design connects Ideal L2 Self (envisioning personally meaningful English use), autonomy-supportive goal choice, retrieval before revealing answers, spaced practice, reduced assistance and transfer across different content. These principles guide implementation; the product's efficacy has not been established by a learner study. Longer independent goal-relevant tasks are needed to assess actual transfer beyond short conversations.
+## 권한과 데이터
 
-References: [Ideal L2 Self intervention](https://doi.org/10.1016/j.system.2019.01.003), [Self-determination in education](https://selfdeterminationtheory.org/SDT/documents/2009_NiemiecRyan_TRE.pdf), [Spacing and retrieval](https://doi.org/10.1038/s44159-022-00089-1).
+고양이를 켜기 전에는 `activeTab`으로 명시적으로 호출한 페이지에 접근합니다. 고양이는 여러 사이트에 계속 표시해야 하므로 **선택적 HTTP/HTTPS 사이트 접근 권한**을 켤 때 요청합니다. 고양이 스크립트는 표시·버튼·제안만 처리하고 페이지 본문을 계속 수집하지 않습니다. 클릭하면 worker가 본문/선택 문장 최대 6,000자를 가져와 목표·최근 기록과 함께 OpenAI로 전송해 스몰톡을 시작합니다. 고양이를 끄면 등록과 선택적 사이트 권한을 해제합니다. Chrome 내부 페이지·웹 스토어 등 보호된 화면에는 표시되지 않을 수 있습니다.
 
-## API and privacy
+API 키는 trusted-context-only `chrome.storage.local`에 저장하며 암호화된 금고는 아닙니다. 웹페이지·고양이 스크립트에는 키와 개인 학습 기록을 전달하지 않습니다. 학습 기록·복습 일정은 로컬에 남습니다. 요청은 OpenAI Responses API(`gpt-4o-mini`, Structured Outputs, `store:false`)로 직접 갑니다. `store:false`가 제공자의 모든 로그·보존이 없다는 뜻은 아닙니다. 운영 서버·공유 키·분석 추적은 없습니다. [데이터 안내](PRIVACY.md)
 
-The key is kept in trusted-context-only `chrome.storage.local`, not an encrypted vault. It is never embedded into source, returned in UI snapshots or sent to a page. Requests go directly from the extension worker to OpenAI Responses API, using `gpt-4o-mini` and Structured Outputs. No provider secrets are shared by this project. Invalid keys, quota errors, refusals and network errors are shown explicitly; production never silently replaces AI with simulated replies.
+## 에이전트와 학습 근거
 
-A selected passage or extracted page excerpt up to 6,000 characters is staged locally when you invoke the extension. If no readable text exists, the fallback stores the site label and explicitly notes that content and your exact activity are unknown. You can inspect it before starting. The start action sends that content and relevant learning context to OpenAI under initial consent. Korean pages work as practice material: the coach asks you to convey one actual idea or reaction in English. On Notion, visible editable page blocks are included; selecting a paragraph gives the coach a narrower, more reliable context. The source is treated as untrusted learning material, not as instructions. API calls have no browser automation tools.
+코치는 **목표/관심 이해 → 현재 소재와 난이도 선택 → 먼저 의미 표현 → 종료 후 실제 발언 기반 피드백 → 표현별 회상 기록과 다음 제안 조절**을 연결합니다. 사용자가 매번 학습 과제와 다음 날짜를 정할 필요가 없습니다. 목표 변경은 사용자가 승인합니다.
 
-Permissions: storage, alarms, notifications, idle, sidePanel, activeTab, scripting, contextMenus. The sole persistent host permission is `https://api.openai.com/*`; there is no all-sites host permission or local-server permission. Restricted Chrome pages cannot be read. Some PDFs, embedded frames, canvas, images and videos may not yield usable text; on ordinary web URLs the coach can still ask about your activity at that site. Prefer selecting article text and clicking the icon. See [PRIVACY.md](PRIVACY.md) and [motivation/voice design](docs/MOTIVATION_DESIGN.md).
+[실제 프롬프트와 평가 기준](docs/COACH_PROMPTS.md) · [목표와 동기 설계](docs/MOTIVATION_DESIGN.md) · [표현 학습 근거](docs/CHUNK_LEARNING.md) · [간격 복습 근거와 한계](docs/EXPRESSION_REVIEW.md)
 
-## Develop and preview
+교육 원리가 완성된 서비스의 효과를 입증하지는 않습니다. 실제 모델의 개인화 품질·사용성·지연 회상·새 상황에 적용하는 능력을 별도로 평가해야 합니다.
 
-Node.js 22+. No external packages are required.
+## 업데이트 / 개발
+
+기존 설치 폴더의 파일을 새 ZIP 내용으로 교체 → `chrome://extensions`에서 새로고침 → 열려 있는 코치 화면 다시 열기. 같은 폴더를 유지하면 API 키·목표·기록이 유지됩니다. 진행 중이던 옛 버전 대화는 닫고 새로 시작합니다.
+
+Node.js 22 이상, 외부 패키지 없이 개발할 수 있습니다.
 
 ```sh
 npm test
@@ -68,20 +68,8 @@ npm run build
 npm run dev
 ```
 
-Preview: **http://127.0.0.1:5173/**. The website is a clearly labelled fixed-example preview of onboarding and learning, not a live AI session; it never requests a real key. Live AI operates in the installed extension. `npm run dev` only serves the preview and is not needed for actual use.
+로컬 미리보기는 `http://127.0.0.1:5173/`이며 실제 사용에는 서버가 필요 없습니다. 공개 미리보기는 고정 예시이고 실제 키를 받지 않습니다. 라이브 AI는 설치한 확장에서 동작합니다.
 
-Build outputs:
+빌드 결과: `dist/extension`, `dist/routine-english-extension.zip`, `dist/web`. GitHub workflow가 테스트·빌드·GitHub Pages 게시를 수행합니다. source: `shared/app.js`, `shared/controller.js`, `shared/state.js`, `shared/prompts.js`, `shared/ai.js`, `extension/background.js`, `extension/buddy.js`, `extension/extract.js`.
 
-- `dist/extension`: installable unpacked extension, including its full-page settings site.
-- `dist/routine-english-extension.zip`: standalone installer archive.
-- `dist/web`: static installation preview with the archive; suitable for GitHub Pages.
-
-Source: `shared/prompts.js` (coaching policy), `shared/ai.js` (provider requests and schemas), `shared/controller.js` (agent actions and storage), `shared/state.js` (learning/review/reminder rules), `shared/app.js` (minimal UI), `extension/background.js` (Chrome integration), `extension/extract.js` (page extraction).
-
-Voice is synthesized by the browser; this is turn-based conversation, not the OpenAI Realtime audio API. Chrome 120+ is required.
-
-Tests use mocked provider responses and Chrome APIs to check key privacy, goal-to-plan flow, real request format, answer preservation, adaptive review, reminders and extraction. A user API key is required to verify real model output, billing and quality. Native Chrome installation and microphone/OS notification delivery also require device verification.
-
-## Share and contribute
-
-The source is available under the MIT license. The GitHub workflow tests and builds each push, packages the installer, and publishes the static preview through GitHub Pages. Please avoid including personal keys or learning data in issues or commits.
+자동 테스트는 모의 AI/Chrome API를 사용합니다. 실제 API 품질, 네이티브 설치·권한·마이크·운영체제 알림과 고양이 동작은 기기에서 확인해야 합니다. MIT 라이선스로 공개합니다. 이슈·소스·릴리스에 API 키나 개인 학습 자료를 올리지 마세요.

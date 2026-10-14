@@ -1,4 +1,4 @@
-import {initialState,migrate} from './state.js';
+import {initialState,migrate,expressionCards,nextExpressionReview} from './state.js';
 export const isExtension=!!globalThis.chrome?.runtime?.id;
 export async function send(message){if(isExtension){const response=await chrome.runtime.sendMessage(message);if(!response?.ok)throw Error(response?.error||'확장을 새로고침하고 다시 열어주세요.');return response.value;}return previewSend(message);}
 // A separate, explicitly labelled product preview. Never stores or asks for a real API key.
@@ -16,10 +16,12 @@ async function previewSend(m){if(m.type==='snapshot')return structuredClone(prev
  else if(m.type==='finish')finish();
  else if(m.type==='hint')preview.active.hintUsed=true;
  else if(m.type==='close')preview.active=null;
+ else if(m.type==='review-reveal')preview.reviewReveal={id:m.id};
+ else if(m.type==='review-rate'){const card=expressionCards(preview.state).find(c=>c.id===m.id);const r=nextExpressionReview(card,m.grade);const old=preview.state.expressionReviews?.[m.id];preview.state.expressionReviews={...preview.state.expressionReviews,[m.id]:{...r,history:[...(old?.history||[]),r]}};preview.reviewReveal=null;}
  else if(m.type==='snooze')preview.state.snooze=Date.now()+m.minutes*60000;
  else if(m.type==='resume')preview.state.snooze=0;
  else if(m.type==='settings')preview.state.settings={...preview.state.settings,...m.settings};
  else if(m.type==='disconnect')preview.hasKey=false;
- function finish(){const a=preview.active;a.task=null;a.chunk='bring people together';a.feedback={original:'',chunk:'bring people together',spokenSummary:'This is a preview, so I am not evaluating your English. In the installed extension, your coach will give personal feedback and prepare your next practice.',strength:'미리보기에서는 답변을 평가하지 않아요.',improvement:'실제 AI는 내가 쓴 표현을 바탕으로 개선점 하나를 알려줘요.',expression:'I like shared gardens because they bring people together.',nextFocus:'다른 관심사에서도 이유를 덧붙여보기',score:1};if(!preview.state.sessions.some(s=>s.id===a.id))preview.state.sessions.push({...a,at:Date.now(),due:Date.now()+86400000,skillId:a.skill.id,skillTitle:a.skill.title});}
+ function finish(){const a=preview.active;a.task=null;a.chunk='bring people together';a.feedback={original:'',chunk:'bring people together',meaning:'공동 정원이 사람들을 연결해줘서 좋다',spokenSummary:'This is a preview, so I am not evaluating your English. In the installed extension, your coach will give personal feedback and prepare your next practice.',strength:'미리보기에서는 답변을 평가하지 않아요.',improvement:'실제 AI는 내가 쓴 표현을 바탕으로 개선점 하나를 알려줘요.',expression:'I like shared gardens because they bring people together.',nextFocus:'다른 관심사에서도 이유를 덧붙여보기',score:1};if(!preview.state.sessions.some(s=>s.id===a.id))preview.state.sessions.push({...a,at:Date.now(),due:Date.now()+86400000,skillId:a.skill.id,skillTitle:a.skill.title});}
  sessionStorage.setItem('routine-preview',JSON.stringify(preview));return structuredClone(preview);
 }

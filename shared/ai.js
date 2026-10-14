@@ -9,7 +9,7 @@ export const schemas={
  onboard:object({reply:str,ready:{type:'boolean'},profile,feedback:object({strength:str,improvement:str,example:str}),curriculum:{type:'array',items:item,minItems:0,maxItems:5}}),
  start:object({question:str,hint:str,connection:str,task}),
  turn:object({reply:str,feedback:str,task}),
- finish:object({original:str,chunk:str,spokenSummary:str,strength:str,improvement:str,expression:str,nextFocus:str,score:{type:'integer',enum:[0,1,2]}})
+ finish:object({original:str,chunk:str,meaning:str,spokenSummary:str,strength:str,improvement:str,expression:str,nextFocus:str,score:{type:'integer',enum:[0,1,2]}})
 };
 export function prepare(type,input){const p={};if(type==='check')return p;
  p.profile=input.profile||null;p.messages=(input.messages||[]).slice(-18).map(m=>({role:m.role==='user'?'user':'assistant',content:String(m.content||'').slice(0,4000),...(m.task?{task:m.task}:{})}));

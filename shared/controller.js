@@ -1,11 +1,11 @@
 import {openingQuestion} from './voice.js';
-import {initialState,migrate,material,selectSkill,reviewQueue,dueAt,validateSettings} from './state.js';
+import {initialState,migrate,material,selectSkill,reviewQueue,expressionCards,nextExpressionReview,dueAt,validateSettings} from './state.js';
 import {generate} from './ai.js';
 // The service worker owns all changes; the UI never receives the credential.
 export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.randomUUID()}={}){
  let queue=Promise.resolve();
  const transact=fn=>{const p=queue.then(fn);queue=p.catch(()=>{});return p;};
- async function snapshot(){const {state,credential}=await store.local.get(['state','credential']);const temp=await store.session.get(['active','pageContext','captureError']);return {state:migrate(state),hasKey:!!credential?.key,...temp};}
+ async function snapshot(){const {state,credential}=await store.local.get(['state','credential']);const temp=await store.session.get(['active','pageContext','captureError','reviewReveal']);return {state:migrate(state),hasKey:!!credential?.key,...temp};}
  async function save(state){state.revision++;await store.local.set({state});return state;}
  async function call(type,payload){const {credential}=await store.local.get(['credential']);return ai(type,payload,{key:credential?.key});}
  return {snapshot,dispatch:msg=>transact(async()=>{
@@ -30,6 +30,8 @@ export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.r
    case 'invited':s.lastInvitation=now();await save(s);return snapshot();
    case 'snooze':s.snooze=now()+Math.min(1440,Math.max(1,Number(msg.minutes)||30))*60000;await save(s);return snapshot();
    case 'resume':s.snooze=0;s.lastInvitation=now();await save(s);return snapshot();
+   case 'review-reveal':{const card=expressionCards(s).find(c=>c.id===msg.id);if(!card)throw Error('복습할 표현이 없어요.');await store.session.set({reviewReveal:{id:card.id}});return snapshot();}
+   case 'review-rate':{const card=expressionCards(s).find(c=>c.id===msg.id);if(!card||snap.reviewReveal?.id!==card.id)throw Error('먼저 표현을 확인해주세요.');const result=nextExpressionReview(card,msg.grade,now());const previous=s.expressionReviews?.[card.id];s.expressionReviews={...s.expressionReviews,[card.id]:{...result,history:[...(previous?.history||[]),{at:result.at,grade:result.grade,due:result.due}]}};s.lastInvitation=now();await save(s);await store.session.remove('reviewReveal');return snapshot();}
    case 'start':{
     if(snap.active)throw Error('진행 중인 대화를 먼저 마쳐주세요.');if(!s.onboarding.approved)throw Error('먼저 나의 학습 계획을 확인해주세요.');
     let source,skill,review=false;const chosen=selectSkill(s,now());let previous;

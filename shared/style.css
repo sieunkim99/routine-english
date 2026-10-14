@@ -10,3 +10,10 @@
 .dnd-bar form {display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;}
 .dnd-bar input {max-width:95px;}
 select {display:block;width:100%;padding:12px;border:1px solid #d9ded4;border-radius:12px;background:white;color:inherit;margin-bottom:12px;font:inherit;}
+.recall-card h2 {font-size:1.35rem;line-height:1.55;margin:18px 0;}
+.recall-answer {padding:18px;margin:18px 0;background:#f2f5ec;border-radius:16px;}
+.recall-answer blockquote {font-size:1.5rem;line-height:1.5;margin:0 0 12px;overflow-wrap:anywhere;}
+.recall-ratings {display:grid;gap:8px;}
+.expression-row {padding:18px 0;border-top:1px solid #e4e8df;}
+.expression-row strong {font-size:1.05rem;line-height:1.5;display:block;}
+.expression-row small {display:block;color:#697065;}
