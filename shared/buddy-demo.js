@@ -5,3 +5,5 @@ document.querySelector('#offer').onclick=()=>{quietUntil=0;for(const fn of liste
 document.querySelector('#reveal').onclick=()=>{document.querySelector('#answer').hidden=false;};
 
 document.querySelectorAll('[data-mood]').forEach(b=>b.onclick=()=>{for(const fn of listeners)fn({type:'buddy-state',enabled:true,quietUntil:0,name:'Meow',mood:b.dataset.mood,moodUntil:Date.now()+20000,ignored:b.dataset.mood==='resting'?3:0},{},()=>{});});
+
+document.querySelector('#motion-toggle').onclick=e=>{const paused=document.querySelector('#motion-grid').classList.toggle('motion-paused');e.currentTarget.textContent=paused?'움직임 다시 재생':'움직임 멈추기';e.currentTarget.setAttribute('aria-pressed',String(paused));};
