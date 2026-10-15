@@ -8,8 +8,8 @@ let captureSequence=0;
 export async function capture(tab){const sequence=++captureSequence;try{
  const fallback=activityContext(tab);if(!tab?.id||!fallback)throw Error('일반 웹페이지에서 MeowChat 아이콘이나 단축키로 열어주세요.');
  let context;try{const [result]=await chrome.scripting.executeScript({target:{tabId:tab.id},func:extractPage});context=result?.result&&!result.error?{...result.result,tabId:tab.id}:null;}catch{}
- if(sequence===captureSequence)await chrome.storage.session.set({pageContext:context||{...fallback,tabId:tab.id},captureError:''});
- }catch(error){if(sequence===captureSequence)await chrome.storage.session.set({pageContext:null,captureError:error.message});}}
+ if(sequence===captureSequence)await chrome.storage.session.set({pageContext:context||{...fallback,tabId:tab.id},captureError:'',captureNotice:context?'':'본문을 읽지 못해 사이트 정보만 가져왔어요. 검색 결과나 글 본문을 보이게 한 뒤 다시 읽거나, 20자 이상의 문단을 선택해주세요.'});
+ }catch(error){if(sequence===captureSequence)await chrome.storage.session.set({pageContext:null,captureNotice:'',captureError:error.message});}}
 function openFromAction(tab){chrome.sidePanel.open({tabId:tab.id}).catch(()=>{});capture(tab);}
 chrome.action.onClicked.addListener(openFromAction);
 chrome.contextMenus.onClicked.addListener((info,tab)=>{if(info.menuItemId==='practice')openFromAction(tab);});
@@ -26,7 +26,7 @@ async function setup(details){await ready;await chrome.sidePanel.setPanelBehavio
 chrome.runtime.onInstalled.addListener(setup);chrome.runtime.onStartup.addListener(async()=>{await schedule();await syncBuddy();});
 chrome.permissions?.onRemoved?.addListener(async()=>{const snap=await controller.snapshot();if(snap.state.settings.buddyEnabled&&!await chrome.permissions.contains({origins:['https://*/*','http://*/*']}))await controller.dispatch({type:'settings',settings:{buddyEnabled:false,delivery:'notification'}});await syncBuddy();});
 chrome.storage.onChanged.addListener(async(changes,area)=>{if(area!=='local'||!changes.state)return;await schedule();if(changes.state.newValue?.settings?.buddyEnabled!==changes.state.oldValue?.settings?.buddyEnabled||JSON.stringify(changes.state.newValue?.companion)!==JSON.stringify(changes.state.oldValue?.companion)||changes.state.newValue?.snooze!==changes.state.oldValue?.snooze)await syncBuddy();if(changes.state.newValue?.snooze>Date.now()){await chrome.notifications.clear('practice');const {invitationWindow}=await chrome.storage.session.get('invitationWindow');if(invitationWindow){try{await chrome.windows.remove(invitationWindow);}catch{}await chrome.storage.session.remove('invitationWindow');}}});
-chrome.tabs.onActivated.addListener(async({tabId})=>{captureSequence++;const {pageContext}=await chrome.storage.session.get('pageContext');if(pageContext&&pageContext.tabId!==tabId)await chrome.storage.session.set({pageContext:null,captureError:''});});
+chrome.tabs.onActivated.addListener(async({tabId})=>{captureSequence++;const {pageContext}=await chrome.storage.session.get('pageContext');if(pageContext&&pageContext.tabId!==tabId)await chrome.storage.session.set({pageContext:null,captureError:'',captureNotice:''});});
 chrome.tabs.onUpdated.addListener(async(tabId,change)=>{if(change.status==='loading'){const {pageContext}=await chrome.storage.session.get('pageContext');if(pageContext?.tabId===tabId){captureSequence++;await chrome.storage.session.set({pageContext:null,captureError:'페이지가 바뀌었어요. 아이콘이나 ⌘⇧Y로 다시 열어주세요.'});}}});
 chrome.runtime.onMessage.addListener((message,sender,respond)=>{
  if(sender.id===chrome.runtime.id&&sender.tab&&/^https?:/.test(sender.tab.url||'')&&['buddy-status','buddy-start','buddy-quiet','buddy-settings'].includes(message.type)){

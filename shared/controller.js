@@ -5,7 +5,7 @@ import {generate} from './ai.js';
 export function createController(store,{ai=generate,now=Date.now,id=()=>crypto.randomUUID()}={}){
  let queue=Promise.resolve();
  const transact=fn=>{const p=queue.then(fn);queue=p.catch(()=>{});return p;};
- async function snapshot(){const {state,credential}=await store.local.get(['state','credential']);const temp=await store.session.get(['active','pageContext','captureError','reviewReveal']);return {state:migrate(state),hasKey:!!credential?.key,...temp};}
+ async function snapshot(){const {state,credential}=await store.local.get(['state','credential']);const temp=await store.session.get(['active','pageContext','captureError','captureNotice','reviewReveal']);return {state:migrate(state),hasKey:!!credential?.key,...temp};}
  async function save(state){state.revision++;await store.local.set({state});return state;}
  async function call(type,payload){const {credential}=await store.local.get(['credential']);const {state}=await store.local.get('state');const c=migrate(state).companion;return ai(type,{...payload,companion:{name:c.name,interests:c.interests,memories:c.memories.slice(-5)}},{key:credential?.key});}
  return {snapshot,dispatch:msg=>transact(async()=>{

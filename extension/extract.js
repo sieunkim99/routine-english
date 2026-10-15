@@ -4,8 +4,8 @@ export function extractPage(){
  const active=document.activeElement;
  const notion=/(^|\.)notion\.(?:so|site|com)$/.test(location.hostname||'');
  const inNotionBlock=notion&&!!active?.closest?.('[data-block-id],.notion-page-content');
- if(active?.matches('input,textarea')||active?.matches('[contenteditable="true"]')&&!inNotionBlock)throw Error('입력창 대신 본문을 선택해주세요.');
- const selection=getSelection()?.toString().trim()||'';
+ const editing=active?.matches('input,textarea')||active?.matches('[contenteditable="true"]')&&!inNotionBlock;
+ const selection=editing?'':getSelection()?.toString().trim()||'';
  const root=(notion&&active?.closest?.('.notion-page-content'))||(notion&&document.querySelector('.notion-page-content,[data-testid="page-content"]'))||document.querySelector('[role="main"],main')||(document.querySelectorAll?.('article').length>1?document.body:document.querySelector('article'))||document.body;
  const blocked='script,style,noscript,nav,header,footer,aside,form,input,textarea,select,button,[aria-hidden="true"],[hidden]';
  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let node,total='',onScreen='',count=0;

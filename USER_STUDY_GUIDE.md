@@ -1,5 +1,7 @@
 # MeowChat 사용자 가이드 🐾
 
+Google 사이트 정보만 나오거나 화면 근거 오류가 반복되면 0.16.1 이상으로 업데이트하세요. [화면 읽기 가이드](https://github.com/sieunkim99/routine-english/blob/main/docs/SCREEN_CONTEXT_GUIDE.md)에 원인과 대처 방법이 있습니다.
+
 **현재 화면으로 짧게 영어 이야기하기 → 더 자연스러운 표현 배우기 → 나중에 떠올리기.**
 
 [최신 설치 파일](https://github.com/sieunkim99/routine-english/releases/latest/download/routine-english-extension.zip) · [서비스 소개·체험](https://sieunkim99.github.io/routine-english/) · [API 키 만들기](https://platform.openai.com/api-keys)
